@@ -22,6 +22,7 @@ export default class App extends React.Component {
       search: '',
       data: [],
       temp: '',
+      selectedSong: {},
     };
     this.arrayholder = []
   }
@@ -45,8 +46,25 @@ export default class App extends React.Component {
   }
 
   handleOnClick = (item) => {
-    console.log(item)
+    axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/' + '69253803', {
+      headers: {
+        "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
+      }
+    })
+    .then(response => {
+      item.artwork = response.data.artist.jackets["50"]
+      console.log(item)
+
+      const sendThisToBackend = {
+        mode: "drive",
+        channel: "rap",
+        song: item
+      }
+
+      console.log(sendThisToBackend)
+    });
   }
+
 
   search = text => {
     console.log(text);
@@ -57,10 +75,6 @@ export default class App extends React.Component {
 
 
   SearchFilterFunction(text) {
-    // get list of songs
-    // add them to the data array
-
-    // console.log(text);
     axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs', {
       params: {
         "query": text
@@ -71,20 +85,18 @@ export default class App extends React.Component {
     })
     .then(response => {
       const songs = response.data.songs;
-      // console.log(songs);
-
       let dataSongs = [];
-      // console.log(this.state.data);
-      songs.forEach(song => {
+      songs.forEach((song, index) => {
+        //song.artwork = getSongArtwork(song.id) // call a function here to get the artwork
+        console.log(song);
         dataSongs.push(song);
-      });
 
-      // console.log(dataSongs);
+        // const value =  await this.getSongArtwork(song.id);
+        // console.log(value);
+      });
       this.setState({
         data: dataSongs
       });
-
-      // console.log(this.state.data);
     });
 
     //passing the inserted text in textinput
@@ -105,22 +117,15 @@ export default class App extends React.Component {
 
 
   // Finds the song artwork given a song ID
-  findSongArtwork(id) {
-    axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/69253803', {
-      headers: {
-        "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
-      }
-    })
-    .then(response => {
-      const albumCover = response.data.album.jackets['50']
-      // console.log(response.data.album.jackets['50'])
-      this.setState({
-        temp: albumCover
-      })
-      // this.state.temp = albumCover
-      console.log(this.state.temp)
-    });
-  }
+  // getSongArtwork(id) {
+  //   const test = axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/69253803', {
+  //     headers: {
+  //       "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
+  //     }
+  //   });
+
+  //   return test;
+  // }
 
 
   ListViewItemSeparator = () => {
@@ -148,22 +153,13 @@ export default class App extends React.Component {
     return (
       //ListView to show with textinput used as search bar
       <View style={styles.viewStyle}>
-        {/* <SearchBar
+        <SearchBar
           round
           searchIcon={{ size: 24 }}
           onChangeText={text => this.SearchFilterFunction(text)}
           onClear={text => this.SearchFilterFunction('')}
           placeholder="Type Here..."
           value={this.state.search}
-        /> */}
-        {this.findSongArtwork(69253803)}
-        <Image
-          style={{width: 50, height: 50}}
-          source={{uri: this.state.temp}}
-        />
-        <Image
-          style={{width: 50, height: 50}}
-          source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}}
         />
         <FlatList
           data={this.state.data}

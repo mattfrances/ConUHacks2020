@@ -39,7 +39,7 @@ export default class MusicPlayer extends React.Component {
 				interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
 				shouldDuckAndroid: true,
 				staysActiveInBackground: true,
-				playThroughEarpieceAndroid: true
+				playThroughEarpieceAndroid: false
 			})
 
 			this.loadAudio()
