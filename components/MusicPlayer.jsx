@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View, Image, Text } from 'react-native'
-import { Icon } from 'react-native-elements';
+//import { Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons'
 import { Audio } from 'expo-av'
 
@@ -144,6 +145,9 @@ export default class MusicPlayer extends React.Component {
                 >
                     <Icon name="search"  size={30} color="#01a699" />
                 </TouchableOpacity>
+				
+
+					
 				<Image
 					style={styles.albumCover}
 					source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
@@ -164,6 +168,19 @@ export default class MusicPlayer extends React.Component {
 					</TouchableOpacity>
 				</View>
 				{this.renderFileInfo()}
+				{/* <View style={{flex:1, flexDirection: 'row'}}>
+					
+				<Icon name= "thumbs-up" size={60} color="#01a699"
+					style={{margin:30}}/>
+				<Icon name= "thumbs-down" size={60} color="#01a699"
+				style={{margin:30}}/>
+				</View> */}
+				<View style={styles.controls}>	
+				<Icon name= "thumbs-up" size={60} color="#01a699"
+					style={{margin:30}}/>
+				<Icon name= "thumbs-down" size={60} color="#01a699"
+				style={{margin:30}}/>
+				</View>
 			</View>
 		)
 	}
@@ -181,7 +198,6 @@ const styles = StyleSheet.create({
 		height: 250
 	},
 	trackInfo: {
-		padding: 40,
 		backgroundColor: '#fff'
 	},
 
