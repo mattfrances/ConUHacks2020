@@ -8,10 +8,14 @@ import {
   ActivityIndicator,
   Platform,
   TouchableOpacity,
-  Image
+  Image,
+  SafeAreaView,
 } from 'react-native';
 import { SearchBar, Card } from 'react-native-elements';
 import axios from 'axios';
+import Header from './Header';
+import Icon from 'react-native-vector-icons/Feather';
+
 
 export default class App extends React.Component {
   constructor(props) {
@@ -152,7 +156,11 @@ export default class App extends React.Component {
     }
     return (
       //ListView to show with textinput used as search bar
-      <View style={styles.viewStyle}>
+      <SafeAreaView style={styles.viewStyle}>
+        <Header 
+          // message="Playing From Charts"
+          navigation = {this.props.navigation}
+        />
         <SearchBar
           round
           searchIcon={{ size: 24 }}
@@ -165,16 +173,19 @@ export default class App extends React.Component {
           data={this.state.data}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => this.handleOnClick(item)}>
-              <Card>
+              <Card containerStyle={styles.card} >
                 <Text style={styles.textStyle}>{item.title} by {item.artistName}</Text>
+                <Icon 
+                  size={10} 
+                  color="white"
+                />
               </Card>
             </TouchableOpacity>
           )}
           enableEmptySections={true}
-          style={{ marginTop: 10 }}
           keyExtractor={(item, index) => index.toString()}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -183,9 +194,16 @@ const styles = StyleSheet.create({
   viewStyle: {
     justifyContent: 'center',
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   textStyle: {
-    padding: 10,
+    padding: 5,
+    color: 'white',
+    fontSize: 16,
+  },
+  card: {
+    borderWidth: 0,
+    backgroundColor: 'black',
+    margin: 0,
   },
 });
