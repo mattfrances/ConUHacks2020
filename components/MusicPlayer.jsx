@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import Header from './Header';
+import HeaderMusicPage from './HeaderMusicPage';
 import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
 import SearchAndQueue from './SearchAndQueue';
@@ -28,13 +29,17 @@ const audioBookPlaylist = [
 ]
 
 export default class MusicPlayer extends React.Component {
-	state = {
-		isPlaying: false,
-		playbackInstance: null,
-		currentIndex: 0,
-		volume: 1.0,
-        isBuffering: true
-	}
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isPlaying: true,
+            playbackInstance: null,
+            currentIndex: 0,
+            volume: 1.0,
+            isBuffering: true
+        }
+    }
 
 	async componentDidMount() {
 		try {
@@ -51,12 +56,14 @@ export default class MusicPlayer extends React.Component {
 			this.loadAudio()
 		} catch (e) {
 			console.log(e)
-		}
+        }
     }
 
-    componentWillUnmount() {
-        this.handlePlayPause
-    }
+    // componentWillUnmount() {
+    //     // this.setState({
+    //     //     isPlaying:
+    //     // })
+    // }
 
 	async loadAudio() {
 		const { currentIndex, isPlaying, volume } = this.state
@@ -94,7 +101,9 @@ export default class MusicPlayer extends React.Component {
 
 		this.setState({
 			isPlaying: !isPlaying
-		})
+        })
+        
+        console.log("In PlayL")
 	}
 
 	handlePreviousTrack = async () => {
@@ -139,12 +148,8 @@ export default class MusicPlayer extends React.Component {
 				</Text>
 			</View>
 		) : null
-	}
-
-    static navigationOptions = {
-        headerTitle: "TEST",
-    };
-
+    }
+    
 	render() {
 
         let currentIndex = 0;
@@ -200,17 +205,23 @@ export default class MusicPlayer extends React.Component {
 			// </View>
 
             <SafeAreaView style={styles.container}>
+                {/* {this.handlePlayPause} */}
             {/* <HeaderBackButton onPress={() => navigation.goBack(null)} /> */}
             <StatusBar hidden={false} barStyle="light-content"/>
-            <Header 
+            <HeaderMusicPage
+                navigation = {this.props.navigation}
+                playPause = {this.handlePlayPause}
+            />
+            {/* <Header 
                 message="Playing From Charts"
                 navigation = {this.props.navigation}
-            />
+            /> */}
             <AlbumArt 
                 url="http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg"
             />
-            <TrackDetails title='Current Title' artist='Current Artist' navigation={this.props.navigation}/>
+            <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation}/>
             <VoteUpNext />
+            {/* <Button onPress={this.handlePlayPause} title="Click Me"/> */}
             </SafeAreaView>
 		)
 	}

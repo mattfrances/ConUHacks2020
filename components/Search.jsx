@@ -64,8 +64,9 @@ export default class App extends React.Component {
         channel: "rap",
         song: item
       }
-
-      console.log(sendThisToBackend)
+      alert(item.title + " by " + item.artistName + " added to Queue");
+      this.props.navigation.goBack();
+      console.log(sendThisToBackend);
     });
   }
 
@@ -175,10 +176,6 @@ export default class App extends React.Component {
             <TouchableOpacity onPress={() => this.handleOnClick(item)}>
               <Card containerStyle={styles.card} >
                 <Text style={styles.textStyle}>{item.title} by {item.artistName}</Text>
-                <Icon 
-                  size={10} 
-                  color="white"
-                />
               </Card>
             </TouchableOpacity>
           )}
@@ -205,5 +202,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: 'black',
     margin: 0,
+    borderColor: 'green',
   },
 });

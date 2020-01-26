@@ -11,15 +11,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-export default class Header extends Component {
+export default class HeaderMusicPage extends Component {
     constructor(props) {
         super(props);
+
+        this.onButtonPressed = this.onButtonPressed.bind(this);
+    }
+
+    onButtonPressed() {
+        this.props.navigation.goBack(); 
+        this.props.playPause;
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Ionicons name='ios-arrow-back' style={styles.icon} onPress={() => this.props.navigation.goBack()}/>
+                <Ionicons name='ios-arrow-back' style={styles.icon} onPress={this.onButtonPressed}/>
                 <Text style={styles.message}>TESTING</Text>
             </View>
         );

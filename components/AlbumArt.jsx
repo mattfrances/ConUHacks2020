@@ -11,16 +11,13 @@ import {
 } from 'react-native';
 
 const AlbumArt = ({
-  url,
-  onPress
+  url
 }) => (
   <View style={styles.container}>
-    <TouchableOpacity onPress={onPress}>
-      <Image
-        style={styles.image}
-        source={{uri: url}}
-      />
-    </TouchableOpacity>
+    <Image
+    style={styles.image}
+    source={{uri: url}}
+    />
   </View>
 );
 
