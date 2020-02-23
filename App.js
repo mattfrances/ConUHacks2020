@@ -24,10 +24,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 
 
-const rootRef = firebase.database().ref(`rooms/12345`)
-        rootRef.on('value',snap => {
-          console.log(snap.val())
-        })
+const roomRef = firebase.database().ref(`rooms`)
+        // rootRef.on('value',snap => {
+        //   console.log(snap.val())
+        // })
 
 
 const AppNavigator = createStackNavigator(
@@ -75,7 +75,7 @@ export default class App extends React.Component {
 
   render() {
     // return <AppContainer data={this.state.data} />;
-    return <AppContainer screenProps={{playbackInstance:playbackInstance}} />
+    return <AppContainer screenProps={{playbackInstance, roomRef}} />
   }
 
 }

@@ -1,33 +1,27 @@
 import React, { Component } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
+import * as firebase from 'firebase';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 
 
 export default class CreateParty extends Component {
     state = {
         partyCode: 0,
+        password : "",
     }
 
     componentDidMount() {
-        console.log("MOUNTED")
-        // axios.get('http://5b25f14e.ngrok.io/')
-        // .then(res => {
-        //     console.log(res)
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        // })
-        // axios.post('http://5b25f14e.ngrok.io/create', {
-        //     "password": "1111",
-        // })
-        // .then(res => {
-        //     this.setState({
-        //         partyCode: res.data
-        //     })
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        // })
+        const roomsRef = firebase.database().ref(`rooms`)
+        roomsRef.once('value',snap => {
+          const rooms = Object.keys(snap.val())
+          let hostNumber = Math.floor(Math.random()*90000) + 10000;
+          while(hostNumber in rooms){
+            hostNumber = Math.floor(Math.random()*90000) + 10000;
+          }
+          this.setState({partyCode:hostNumber})
+
+        })
     }
 
     render() {
@@ -36,7 +30,11 @@ export default class CreateParty extends Component {
                 <Text style={styles.h1}>Your party code is:</Text>
                 <Text style={styles.h1}>{this.state.partyCode}</Text>
                 <Text style={styles.h1}>Your password is:</Text>
-                <Text style={styles.h1}>1111</Text>
+                <SmoothPinCodeInput
+  cellSize={36}
+  codeLength={4}
+  value={this.state.password}
+  onTextChange={password => this.setState({ password })}/>
                 <TouchableOpacity onPress={() =>
                     this.props.navigation.navigate('Playing', {
                         roomId: this.state.partyCode,
