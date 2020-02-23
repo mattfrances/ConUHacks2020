@@ -32,7 +32,7 @@ const audioBookPlaylist = [
 export default class MusicPlayer extends React.Component {
     state = {
 		isPlaying: false,
-		playbackInstance: null,
+		// playbackInstance: null, now a prop for safe unmount
 		currentIndex: 0,
 		volume: 1.0,
 		isBuffering: true
@@ -55,30 +55,12 @@ export default class MusicPlayer extends React.Component {
 				console.log(e)
 			}
 		}
-
-	async loadAudio() {
-		const { currentIndex, isPlaying, volume } = this.state
-
-		try {
-			const playbackInstance = new Audio.Sound()
-			const source = {
-				uri: audioBookPlaylist[1].uri
-			}
-
-			const status = {
-				shouldPlay: isPlaying,
-				volume: volume
-			}
-
-			playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
-			await playbackInstance.loadAsync(source, status, false)
-			this.setState({
-				playbackInstance
-			})
-		} catch (e) {
-			console.log(e)
-		}
+	async componentWillUnmount() {
+		const  playbackInstance  = this.props.screenProps.playbackInstance
+		await playbackInstance.unloadAsync()
+		
 	}
+
 
 	async loadAudio() {
 		const { currentIndex, isPlaying, volume } = this.state
@@ -87,7 +69,7 @@ export default class MusicPlayer extends React.Component {
 		// console.log(this.props.screenProps.data[roomId].songs);
 
 		try {
-			const playbackInstance = new Audio.Sound()
+			const playbackInstance = this.props.screenProps.playbackInstance
 			const source = {
 				uri: 'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3'
 			}
@@ -98,11 +80,11 @@ export default class MusicPlayer extends React.Component {
 				volume: volume
 			}
 
-			playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+			// playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
 			await playbackInstance.loadAsync(source, status, false)
-			this.setState({
-				playbackInstance
-			})
+			// this.setState({
+			// 	playbackInstance
+			// })
 		} catch (e) {
 			console.log(e)
 		}
@@ -110,14 +92,15 @@ export default class MusicPlayer extends React.Component {
 		this.handlePlayPause()
 	}
 
-	onPlaybackStatusUpdate = status => {
-		this.setState({
-			isBuffering: status.isBuffering
-		})
-	}
+	// onPlaybackStatusUpdate = status => {
+	// 	this.setState({
+	// 		isBuffering: status.isBuffering
+	// 	})
+	// }
 
 	handlePlayPause = async () => {
-		const { isPlaying, playbackInstance } = this.state
+		const { isPlaying} = this.state
+		const  playbackInstance  = this.props.screenProps.playbackInstance
 		isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
 
 		this.setState({
@@ -126,7 +109,8 @@ export default class MusicPlayer extends React.Component {
 	}
 
 	handlePreviousTrack = async () => {
-		let { playbackInstance, currentIndex } = this.state
+		const { isPlaying} = this.state
+		const  playbackInstance  = this.props.screenProps.playbackInstance
 		if (playbackInstance) {
 			await playbackInstance.unloadAsync()
 			this.setState({
@@ -137,7 +121,8 @@ export default class MusicPlayer extends React.Component {
 	}
 
 	handleNextTrack = async () => {
-		let { playbackInstance, currentIndex } = this.state
+		const { isPlaying} = this.state
+		const  playbackInstance  = this.props.screenProps.playbackInstance
 		if (playbackInstance) {
 			await playbackInstance.unloadAsync()
 			this.setState({
@@ -148,7 +133,9 @@ export default class MusicPlayer extends React.Component {
 	}
 
 	renderFileInfo() {
-		const { playbackInstance, currentIndex } = this.state
+		const { isPlaying} = this.state
+		const  playbackInstance  = this.props.screenProps.playbackInstance
+
 		return playbackInstance ? (
 			<View style={styles.trackInfo}>
 				<Text style={[styles.trackInfoText, styles.largeText]}>

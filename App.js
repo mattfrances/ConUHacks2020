@@ -9,6 +9,8 @@ import CreateParty from './components/CreateParty';
 import JoinParty from './components/JoinParty';
 import Queue from './components/Queue';
 import axios from 'axios';
+import { Audio } from 'expo-av';
+
 
 
 const AppNavigator = createStackNavigator(
@@ -26,6 +28,9 @@ const AppNavigator = createStackNavigator(
     headerMode: 'none',
   },
 );
+
+const playbackInstance = new Audio.Sound()
+
 
 const AppContainer = createAppContainer(AppNavigator);
 
@@ -53,7 +58,7 @@ export default class App extends React.Component {
 
   render() {
     // return <AppContainer data={this.state.data} />;
-    return <AppContainer />
+    return <AppContainer screenProps={{playbackInstance:playbackInstance}} />
   }
 
 }
