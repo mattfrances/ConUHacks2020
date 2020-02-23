@@ -7,7 +7,6 @@ import { Audio } from 'expo-av';
 import Header from './Header';
 import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
-import SearchAndQueue from './SearchAndQueue';
 import VoteUpNext from './VoteUpNext';
 import axios from 'axios';
 import PlayPauseNext from './PlayPauseNext';
@@ -31,7 +30,6 @@ const audioBookPlaylist = [
 
 export default class MusicPlayer extends React.Component {
     state = {
-		showModal : false,
 		isPlaying: false,
 		// playbackInstance: null, now a prop for safe unmount
 		currentIndex: 0,
@@ -165,7 +163,7 @@ export default class MusicPlayer extends React.Component {
 		
 		return (
             <SafeAreaView style={styles.container}>
-                
+            
             <StatusBar hidden={false} barStyle="light-content"/>
 
 			
@@ -179,7 +177,7 @@ export default class MusicPlayer extends React.Component {
             />
 			{/* <PlayPauseNext /> */}
             <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
-            <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
+		    <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+ 
 } from 'react-native';
 import { SearchBar, Card } from 'react-native-elements';
 import axios from 'axios';
@@ -18,18 +19,16 @@ import Icon from 'react-native-vector-icons/Feather';
 
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props);
+  
     //setting default state
-    this.state = { 
+    state = { 
+      arrayholder : [],
       isLoading: true, 
       search: '',
       data: [],
       temp: '',
       selectedSong: {},
     };
-    this.arrayholder = []
-  }
   componentDidMount() {
     return fetch('https://jsonplaceholder.typicode.com/posts')
       .then(response => response.json())
@@ -40,7 +39,7 @@ export default class App extends React.Component {
             dataSource: responseJson,
           },
           function() {
-            this.arrayholder = responseJson;
+            this.setState({arrayholder:responseJson})
           }
         );
       })
@@ -121,7 +120,7 @@ export default class App extends React.Component {
     });
 
     //passing the inserted text in textinput
-    const newData = this.arrayholder.filter(function(item) {
+    const newData = this.state.arrayholder.filter(function(item) {
       //applying filter for the inserted text in search bar
       const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
       const textData = text.toUpperCase();
@@ -166,7 +165,7 @@ export default class App extends React.Component {
     if (this.state.isLoading) {
       // Loading View while data is loading
       return (
-        <View style={{ flex: 1, paddingTop: 20 }}>
+        <View style={{ flex: 1, paddingTop: 20, backgroundColor:'black'}}>
           <ActivityIndicator />
         </View>
       );
