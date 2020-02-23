@@ -11,6 +11,37 @@ import {
   Dimensions,
 } from 'react-native';
 
+const thisIsAList = [
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+    {
+        title: "Song1",
+        Artist: "ARtis1"
+    },
+]
+
 export default class VoteUpNext extends Component {
     constructor(props) {
         super(props);
@@ -41,30 +72,16 @@ export default class VoteUpNext extends Component {
 
     render() {
         return (
-            <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
-                <TouchableOpacity onPress={() => this.onDownVotePressed()}>
-                    <Icon 
-                        name= "thumbs-down" 
-                        size={60} 
-                        color={this.state.thumbsDownPressed ? "#ff0000" : "#fff"}
-                    />
-                </TouchableOpacity>
-                <View style={{ alignItems: "center" }}>
-                {this.props.genre && 
-                    <Text style={styles.title}>Next Up:</Text>
-                }
-                <Text style={styles.title}>{this.props.title}</Text>
-                <Text style={styles.artist}>{this.props.artist}</Text>
-                </View>
-                
-                <TouchableOpacity onPress={() => this.onUpVotePressed()}>
-                    <Icon 
-                        name= "thumbs-up" 
-                        size={60} 
-                        color={this.state.thumbsUpPressed ? "#33cc33" : "#fff"}
-                    />
-                </TouchableOpacity>
-            </View>
+            <React.Fragment>
+            
+                {/* {thisIsAList.forEach(item => {
+                    return (
+                        
+                        
+                    )
+                })} */}
+
+            </React.Fragment>
         );
     }
 }

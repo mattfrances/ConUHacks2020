@@ -20,7 +20,7 @@ export default class Header extends Component {
         return (
             <View style={styles.container}>
                 <Ionicons name='ios-arrow-back' style={styles.icon} onPress={() => this.props.navigation.goBack()}/>
-                <Text style={styles.message}>TESTING</Text>
+                <Text style={styles.message}>{this.props.title || "houseParty"}</Text>
             </View>
         );
     }

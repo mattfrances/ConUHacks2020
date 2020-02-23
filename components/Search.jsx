@@ -50,24 +50,41 @@ export default class App extends React.Component {
   }
 
   handleOnClick = (item) => {
-    axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/' + '69253803', {
+    axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/' + item.id, {
       headers: {
         "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
       }
     })
     .then(response => {
-      item.artwork = response.data.artist.jackets["50"]
-      console.log(item)
+      // console.log("RESPONSE")
+      // console.log(response.data.playUrl)
+      item.artwork = response.data.artist.jackets["250"]
+      item.uri = response.data.playUrl
 
-      const sendThisToBackend = {
-        mode: "drive",
-        channel: "rap",
-        song: item
-      }
-      alert(item.title + " by " + item.artistName + " added to Queue");
-      this.props.navigation.goBack();
-      console.log(sendThisToBackend);
+      this.setState({
+        selectedSong: item
+      });
+      console.log("SELECTED SONG")
+      console.log(this.state.selectedSong);
+      
+      this.addSongToQueue()
     });
+  }
+
+  addSongToQueue = () => {
+    console.log("adding song to queue")
+    alert(this.state.selectedSong.title + " by " + this.state.selectedSong.artistName + " added to Queue")
+    this.props.navigation.goBack();
+
+    // console.log("ROOOOM ID: " + this.props.navigation.getParam('roomId'));
+    console.log("IN ADDSONGTOQUEUE")
+    console.log(this.state.selectedSong)
+    // axios.post('http://5b25f14e.ngrok.io/add', {
+    //   "roomId": this.props.navigation.getParam('roomId'),
+    //   "song": this.state.selectedSong
+    // })
+    // .then(res => {
+    // })
   }
 
 
@@ -93,7 +110,6 @@ export default class App extends React.Component {
       let dataSongs = [];
       songs.forEach((song, index) => {
         //song.artwork = getSongArtwork(song.id) // call a function here to get the artwork
-        console.log(song);
         dataSongs.push(song);
 
         // const value =  await this.getSongArtwork(song.id);

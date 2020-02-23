@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-export default class TrackDetails extends Component {
+export default class PlayPauseNext extends Component {
 
   render() {
     return (
@@ -29,7 +29,7 @@ export default class TrackDetails extends Component {
           <Text style={styles.title}>{this.props.title}</Text>
           <Text style={styles.artist}>{this.props.artist}</Text>
         </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Queue')}>
+        <TouchableOpacity onPress={() => console.log("List queue.")}>
             <Icon 
                 name= "menu" 
                 size={35} 

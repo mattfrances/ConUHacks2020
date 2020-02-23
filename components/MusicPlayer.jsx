@@ -5,65 +5,56 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import Header from './Header';
-import HeaderMusicPage from './HeaderMusicPage';
 import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
 import SearchAndQueue from './SearchAndQueue';
 import VoteUpNext from './VoteUpNext';
+import axios from 'axios';
+import PlayPauseNext from './PlayPauseNext';
 
 const audioBookPlaylist = [
 	{
-		title: 'Lets get it',
-		author: 'The boys',
+		title: 'Life Is Good',
+		author: 'Future',
 		uri:
 			'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3',
-		imageSource: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg'
+		imageSource: 'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/4bb82b72535211.5bead62fe26d5.jpg'
 	},
 	{
 		title: 'Hamlet - Act II',
 		author: 'William Shakespeare',
 		uri:
-			'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3',
+			'https://drive.google.com/uc?export=download&id=1_aXMXriqDj-Mki5cm3ZLXNhHua3VE6KH',
 		imageSource: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg'
 	},
 ]
 
 export default class MusicPlayer extends React.Component {
-    constructor(props) {
-        super(props);
+    state = {
+		isPlaying: false,
+		playbackInstance: null,
+		currentIndex: 0,
+		volume: 1.0,
+		isBuffering: true
+	}
 
-        this.state = {
-            isPlaying: true,
-            playbackInstance: null,
-            currentIndex: 0,
-            volume: 1.0,
-            isBuffering: true
-        }
-    }
-
-	async componentDidMount() {
-		try {
-			await Audio.setAudioModeAsync({
-				allowsRecordingIOS: false,
-				interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-				playsInSilentModeIOS: true,
-				interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-				shouldDuckAndroid: true,
-				staysActiveInBackground: true,
-				playThroughEarpieceAndroid: false
-			})
-
-			this.loadAudio()
-		} catch (e) {
-			console.log(e)
-        }
-    }
-
-    // componentWillUnmount() {
-    //     // this.setState({
-    //     //     isPlaying:
-    //     // })
-    // }
+		async componentDidMount() {
+			try {
+				await Audio.setAudioModeAsync({
+					allowsRecordingIOS: false,
+					interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+					playsInSilentModeIOS: true,
+					interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+					shouldDuckAndroid: true,
+					staysActiveInBackground: true,
+					playThroughEarpieceAndroid: false
+				})
+	
+				this.loadAudio()
+			} catch (e) {
+				console.log(e)
+			}
+		}
 
 	async loadAudio() {
 		const { currentIndex, isPlaying, volume } = this.state
@@ -71,7 +62,7 @@ export default class MusicPlayer extends React.Component {
 		try {
 			const playbackInstance = new Audio.Sound()
 			const source = {
-				uri: audioBookPlaylist[currentIndex].uri
+				uri: audioBookPlaylist[1].uri
 			}
 
 			const status = {
@@ -89,10 +80,40 @@ export default class MusicPlayer extends React.Component {
 		}
 	}
 
+	async loadAudio() {
+		const { currentIndex, isPlaying, volume } = this.state
+
+		const roomId = this.props.navigation.getParam('roomId');
+		// console.log(this.props.screenProps.data[roomId].songs);
+
+		try {
+			const playbackInstance = new Audio.Sound()
+			const source = {
+				uri: 'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3'
+			}
+
+
+			const status = {
+				shouldPlay: isPlaying,
+				volume: volume
+			}
+
+			playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+			await playbackInstance.loadAsync(source, status, false)
+			this.setState({
+				playbackInstance
+			})
+		} catch (e) {
+			console.log(e)
+		}
+
+		this.handlePlayPause()
+	}
+
 	onPlaybackStatusUpdate = status => {
 		this.setState({
 			isBuffering: status.isBuffering
-		});
+		})
 	}
 
 	handlePlayPause = async () => {
@@ -101,17 +122,11 @@ export default class MusicPlayer extends React.Component {
 
 		this.setState({
 			isPlaying: !isPlaying
-        })
-        
-        console.log("In PlayL")
+		})
 	}
 
 	handlePreviousTrack = async () => {
-        this.setState({
-            isPlaying: false
-        });
-
-        let { playbackInstance, currentIndex } = this.state
+		let { playbackInstance, currentIndex } = this.state
 		if (playbackInstance) {
 			await playbackInstance.unloadAsync()
 			this.setState({
@@ -119,13 +134,9 @@ export default class MusicPlayer extends React.Component {
 			});
 			this.loadAudio()
 		}
-    }
-    
-	handleNextTrack = async () => {
-        this.setState({
-            isPlaying: false
-        });
+	}
 
+	handleNextTrack = async () => {
 		let { playbackInstance, currentIndex } = this.state
 		if (playbackInstance) {
 			await playbackInstance.unloadAsync()
@@ -134,7 +145,7 @@ export default class MusicPlayer extends React.Component {
 			});
 			this.loadAudio()
 		}
-    }
+	}
 
 	renderFileInfo() {
 		const { playbackInstance, currentIndex } = this.state
@@ -148,80 +159,34 @@ export default class MusicPlayer extends React.Component {
 				</Text>
 			</View>
 		) : null
-    }
-    
+	}
+	
+	onBackButtonPressed = () => {
+		this.handlePlayPause()
+		this.props.navigation.goBack()
+	}
+	
 	render() {
 
         let currentIndex = 0;
 
 		return (
-			// <View style={styles.container}>
-            //     <TouchableOpacity
-            //         onPress={() => this.props.navigation.navigate('Search')}
-            //         style={{
-            //             borderWidth:1,
-            //             borderColor:'rgba(0,0,0,0.2)',
-            //             alignItems:'center',
-            //             justifyContent:'center',
-            //             width:70,
-            //             position: 'absolute',                                          
-            //             top: 10,                                                    
-            //             left: 10,
-            //             height:70,
-            //             backgroundColor:'#fff',
-            //             borderRadius:100,
-            //             }}
-            //     >
-            //         <Icon name="search"  size={30} color="#01a699" />
-            //     </TouchableOpacity>
-			// 	<Image
-			// 		style={styles.albumCover}
-			// 		source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
-			// 	/>
-			// 	<View style={styles.controls}>
-			// 		<TouchableOpacity style={styles.control} onPress={this.handlePreviousTrack}>
-			// 			<Ionicons name='ios-skip-backward' size={48} color='#444' />
-			// 		</TouchableOpacity>
-			// 		<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
-			// 			{this.state.isPlaying ? (
-			// 				<Ionicons name='ios-pause' size={48} color='#444' />
-			// 			) : (
-			// 				<Ionicons name='ios-play-circle' size={48} color='#444' />
-			// 			)}
-			// 		</TouchableOpacity>
-			// 		<TouchableOpacity style={styles.control} onPress={this.handleNextTrack}>
-			// 			<Ionicons name='ios-skip-forward' size={48} color='#444' />
-			// 		</TouchableOpacity>
-			// 	</View>
-            //     <View style={styles.trackInfo}>
-            //         <Text style={[styles.trackInfoText, styles.largeText]}>
-            //             {audioBookPlaylist[this.state.currentIndex].title}
-            //         </Text>
-            //         <Text style={[styles.trackInfoText, styles.smallText]}>
-            //             {audioBookPlaylist[this.state.currentIndex].author}
-            //         </Text>
-			//     </View>
-			// 	{/* {this.renderFileInfo()} */}
-			// </View>
-
             <SafeAreaView style={styles.container}>
-                {/* {this.handlePlayPause} */}
-            {/* <HeaderBackButton onPress={() => navigation.goBack(null)} /> */}
+                
             <StatusBar hidden={false} barStyle="light-content"/>
-            <HeaderMusicPage
-                navigation = {this.props.navigation}
-                playPause = {this.handlePlayPause}
-            />
-            {/* <Header 
-                message="Playing From Charts"
-                navigation = {this.props.navigation}
-            /> */}
+          
+			
+            <View style={styles.headerContainer}>
+                <Ionicons name='ios-arrow-back' style={styles.headerIcon} onPress={this.onBackButtonPressed}/>
+                <Text style={styles.headerMessage}>Now Playing</Text>
+            </View>
+
             <AlbumArt 
-                url="http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg"
+                url="https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"
             />
-            <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation}/>
-            <VoteUpNext />
-            {/* <Button onPress={this.handlePlayPause} title="Click Me"/> */}
+			{/* <PlayPauseNext /> */}
+            <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
+            <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
             </SafeAreaView>
 		)
 	}
@@ -275,4 +240,28 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 4,
     },
+    headerContainer: {
+        height: 72,
+        paddingTop: 20,
+        paddingLeft: 12,
+        paddingRight: 12,
+        flexDirection: 'row',
+        // flex: 0.1,
+      },
+      headerMessage: {
+        // flex: 1,
+        // textAlign: 'center',
+        color: 'rgba(255, 255, 255, 0.72)',
+        fontWeight: 'bold',
+        fontSize: 20,
+        // borderColor: 'red',
+        // borderWidth: 5,
+        position: "relative",
+        top: 0,
+        left: 115,
+      },
+      headerIcon: {
+        fontSize: 32,
+        color: '#444',
+      },
 })
