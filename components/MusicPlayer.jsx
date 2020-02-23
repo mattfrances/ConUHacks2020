@@ -41,7 +41,6 @@ export default class MusicPlayer extends React.Component {
 	}
 
 		async componentDidMount() {
-			console.log()
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
 			try {
 				await Audio.setAudioModeAsync({

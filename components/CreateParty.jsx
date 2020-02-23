@@ -16,13 +16,13 @@ export default class CreateParty extends Component {
         const roomsRef = firebase.database().ref(`rooms`)
         this.setState({roomsRef})
         roomsRef.once('value',snap => {
-          const rooms = Object.keys(snap.val())
+          const rooms =  snap.val() ? Object.keys(snap.val()) : []
           //gen random 5 digit 
           let hostNumber = Math.floor(Math.random()*90000) + 10000;
           while(hostNumber in rooms){
             hostNumber = Math.floor(Math.random()*90000) + 10000;
           }
-          this.setState({partyCode:hostNumber})
+          this.setState({partyCode:hostNumber.toString()})
 
         })
     }
@@ -59,14 +59,15 @@ export default class CreateParty extends Component {
     _setupRoom = () => {
         const {roomsRef , partyCode} = this.state
             roomsRef.child(partyCode).set({
-                passwprd : this.state.password,
-                startedAt: firebase.database.ServerValue.TIMESTAMP
+                password : this.state.password,
+                startedAt: firebase.database.ServerValue.TIMESTAMP,
+                songs : [{placeholder:'if this is empty, it will not set a val you need to account for this'}],
             })       
          }
 
      _initRoom = () => {
-         const {partyCode ,password} = this.state
-        if(this.state.canProceed){
+         const {partyCode ,password,canProceed} = this.state
+        if(canProceed){
             this._setupRoom()
             this.props.navigation.navigate('Playing', {
                 roomInfo: {

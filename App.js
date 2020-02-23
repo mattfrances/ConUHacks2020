@@ -9,9 +9,11 @@ import CreateParty from './components/CreateParty';
 import JoinParty from './components/JoinParty';
 import Queue from './components/Queue';
 import RoomInfo from './components/RoomInfo'
+import Scanner from './components/Scanner'
 import { Audio } from 'expo-av';
 import * as firebase from 'firebase';
 import {Platform, InteractionManager} from 'react-native';
+
 
 /**
  * IGNORE THE FOLLOWING CODE AS IT REMEDIES THE ANDROID WARNINGS 
@@ -84,6 +86,7 @@ const AppNavigator = createStackNavigator(
     JoinParty: JoinParty,
     Queue: Queue,
     RoomInfo : RoomInfo,
+    Scanner : Scanner,
   },
   {
     initialRouteName: 'Home',
