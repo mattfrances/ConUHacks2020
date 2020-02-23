@@ -23,20 +23,20 @@ export default class VoteUpNext extends Component {
 
     onDownVotePressed = () => {
         console.log("Thumbs down pressed.");
-        if (!this.state.thumbsUpPressed) {
             this.setState(prevState => ({
+                thumbsUpPressed:false,
                 thumbsDownPressed: !prevState.thumbsDownPressed
               }));
-        }
+        
     }
 
     onUpVotePressed = () => {
         console.log("Thumbs up pressed.");
-        if (!this.state.thumbsDownPressed) {
             this.setState(prevState => ({
+                thumbsDownPressed: false,
                 thumbsUpPressed: !prevState.thumbsUpPressed
                 }));
-        }
+        
     }
 
     render() {

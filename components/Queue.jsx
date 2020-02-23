@@ -82,6 +82,7 @@ export default class Queue extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: Expo.Constants.statusBarHeight,
         flex: 1,
         backgroundColor: 'rgb(4,4,4)',
     },

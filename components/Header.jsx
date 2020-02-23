@@ -28,6 +28,7 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: Expo.Constants.statusBarHeight,
     height: 72,
     paddingTop: 20,
     paddingLeft: 12,

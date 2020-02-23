@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
 	// 	justifyContent: 'center'
     // },
     container: {
+		paddingTop: Expo.Constants.statusBarHeight,
         flex: 1,
         backgroundColor: 'rgb(4,4,4)',
     },
@@ -236,16 +237,11 @@ const styles = StyleSheet.create({
         // flex: 0.1,
       },
       headerMessage: {
-        // flex: 1,
-        // textAlign: 'center',
+        flex: 1,
+        textAlign: 'center',
         color: 'rgba(255, 255, 255, 0.72)',
         fontWeight: 'bold',
         fontSize: 20,
-        // borderColor: 'red',
-        // borderWidth: 5,
-        position: "relative",
-        top: 0,
-        left: 115,
       },
       headerIcon: {
         fontSize: 32,

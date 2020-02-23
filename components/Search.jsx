@@ -205,6 +205,7 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   viewStyle: {
+    paddingTop: Expo.Constants.statusBarHeight,
     justifyContent: 'center',
     flex: 1,
     backgroundColor: 'black',
