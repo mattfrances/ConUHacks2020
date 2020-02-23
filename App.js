@@ -10,7 +10,24 @@ import JoinParty from './components/JoinParty';
 import Queue from './components/Queue';
 import axios from 'axios';
 import { Audio } from 'expo-av';
+import * as firebase from 'firebase';
 
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBFz2zbD8HAv73hYQxpWcc0kElmJgb3g34",
+  authDomain: "conuhacksradio.firebaseapp.com",
+  databaseURL: "https://conuhacksradio.firebaseio.com/",
+  storageBucket: "conuhacksradio.appspot.com"
+};
+
+firebase.initializeApp(firebaseConfig)
+
+
+const rootRef = firebase.database().ref(`rooms/12345`)
+        rootRef.on('value',snap => {
+          console.log(snap.val())
+        })
 
 
 const AppNavigator = createStackNavigator(

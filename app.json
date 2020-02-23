@@ -1,5 +1,8 @@
 {
   "expo": {
+    "androidNavigationBar": {
+      "backgroundColor": "#000000"
+      },
     "name": "beatscape",
     "slug": "beatscape",
     "privacy": "public",
