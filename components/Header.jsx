@@ -34,23 +34,20 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 12,
     flexDirection: 'row',
-    // flex: 0.1,
   },
   message: {
-    // flex: 1,
-    // textAlign: 'center',
+    flex: 1,
+    textAlign: 'center',
     color: 'rgba(255, 255, 255, 0.72)',
     fontWeight: 'bold',
     fontSize: 20,
     // borderColor: 'red',
     // borderWidth: 5,
-    position: "relative",
+    // position: "relative",
     top: 0,
-    left: 115,
   },
   icon: {
-    fontSize: 32,
-    color: '#444',
+    color: '#0000',
   },
   button: {
     opacity: 0.72

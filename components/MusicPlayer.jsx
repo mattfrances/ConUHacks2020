@@ -31,14 +31,18 @@ const audioBookPlaylist = [
 
 export default class MusicPlayer extends React.Component {
     state = {
+		showModal : false,
 		isPlaying: false,
 		// playbackInstance: null, now a prop for safe unmount
 		currentIndex: 0,
 		volume: 1.0,
+		roomInfo:null,
 		isBuffering: true
 	}
 
 		async componentDidMount() {
+			console.log()
+			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
 			try {
 				await Audio.setAudioModeAsync({
 					allowsRecordingIOS: false,
@@ -80,6 +84,7 @@ export default class MusicPlayer extends React.Component {
 				volume: volume
 			}
 
+			// this does not seem to be necessary and it makes unmounting more difficult so rm for now
 			// playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
 			await playbackInstance.loadAsync(source, status, false)
 			// this.setState({
@@ -157,14 +162,16 @@ export default class MusicPlayer extends React.Component {
 
         let currentIndex = 0;
 
+		const {roomInfo} =this.state
+		
 		return (
             <SafeAreaView style={styles.container}>
                 
             <StatusBar hidden={false} barStyle="light-content"/>
-          
+
 			
             <View style={styles.headerContainer}>
-                <Ionicons name='ios-arrow-back' style={styles.headerIcon} onPress={this.onBackButtonPressed}/>
+                <Ionicons name='ios-arrow-back' style={styles.headerIcon} size={42} onPress={this.onBackButtonPressed}/>
                 <Text style={styles.headerMessage}>Now Playing</Text>
             </View>
 
@@ -174,7 +181,14 @@ export default class MusicPlayer extends React.Component {
 			{/* <PlayPauseNext /> */}
             <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
             <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
+			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
+                roomInfo: {
+                    partyCode: roomInfo.partyCode,
+                    password: roomInfo.password
+                },
+            })}/>
             </SafeAreaView>
+
 		)
 	}
 }
@@ -244,7 +258,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
       },
       headerIcon: {
-        fontSize: 32,
+        // fontSize: 32,
         color: '#444',
       },
 })
