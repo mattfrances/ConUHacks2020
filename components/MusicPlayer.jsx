@@ -91,7 +91,8 @@ export default class MusicPlayer extends React.Component {
 			console.log(e)
 		}
 
-		this.handlePlayPause()
+		//no
+		// this.handlePlayPause()
 	}
 
 	// onPlaybackStatusUpdate = status => {
@@ -177,6 +178,13 @@ export default class MusicPlayer extends React.Component {
             />
 			{/* <PlayPauseNext /> */}
             <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
+			<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
+						{this.state.isPlaying ? (
+							<Ionicons name='ios-pause' size={48} color='#444' />
+						) : (
+							<Ionicons name='ios-play-circle' size={48} color='#444' />
+						)}
+					</TouchableOpacity>
 		    <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
@@ -257,5 +265,10 @@ const styles = StyleSheet.create({
       headerIcon: {
         // fontSize: 32,
         color: '#444',
-      },
+	  },
+	  control: {
+		flex:1,
+		alignItems:"center",
+		flexDirection: 'column',
+	},
 })

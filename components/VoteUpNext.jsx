@@ -41,7 +41,7 @@ export default class VoteUpNext extends Component {
 
     render() {
         return (
-            <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
+            <View style={{flex:1, margin:0,flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
                 <TouchableOpacity onPress={() => this.onDownVotePressed()}>
                     <Icon 
                         name= "thumbs-down" 
