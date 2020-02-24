@@ -6,9 +6,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  Platform,
   TouchableOpacity,
-  Image,
   SafeAreaView,
  
 } from 'react-native';
@@ -21,12 +19,11 @@ import Icon from 'react-native-vector-icons/Feather';
 export default class App extends React.Component {
   
     //setting default state
-    state = { 
-      arrayholder : [],
-      isLoading: true, 
+    state = {
+      arrayholder: [],
+      isLoading: true,
       search: '',
       data: [],
-      temp: '',
       selectedSong: {},
     };
   componentDidMount() {

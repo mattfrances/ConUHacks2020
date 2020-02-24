@@ -1,26 +1,20 @@
-import React, { Component } from 'react';
-import { Icon } from 'react-native-elements';
+import React, { PureComponent } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { withNavigation } from 'react-navigation';
 
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  TouchableOpacity,
 } from 'react-native';
 
-export default class Header extends Component {
-  constructor(props) {
-    super(props);
-  }
+export default class Header extends PureComponent {
 
   render() {
+    const {navigation , title }  = this.props;
     return (
       <View style={styles.container}>
-        <Ionicons name="ios-arrow-back" style={styles.icon} onPress={() => this.props.navigation.goBack()} />
-        <Text style={styles.message}>{this.props.title || 'houseParty'}</Text>
+        <Ionicons name="ios-arrow-back" style={styles.icon} onPress={() => navigation.goBack()} />
+        <Text style={styles.message}>{title || 'houseParty'}</Text>
       </View>
     );
   }

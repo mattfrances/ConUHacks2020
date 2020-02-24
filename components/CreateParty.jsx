@@ -1,115 +1,117 @@
 import React, { Component } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
+import {
+  SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button
+} from 'react-native';
 import * as firebase from 'firebase';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 
 
 export default class CreateParty extends Component {
     state = {
-        partyCode: 0,
-        password : "",
-        roomsRef : null,
-        canProceed : false,
+      partyCode: 0,
+      password: '',
+      roomsRef: null,
+      canProceed: false,
     }
 
     componentDidMount() {
-        const roomsRef = firebase.database().ref(`rooms`)
-        this.setState({roomsRef})
-        roomsRef.once('value',snap => {
-          const rooms =  snap.val() ? Object.keys(snap.val()) : []
-          //gen random 5 digit 
-          let hostNumber = Math.floor(Math.random()*90000) + 10000;
-          while(hostNumber in rooms){
-            hostNumber = Math.floor(Math.random()*90000) + 10000;
-          }
-          this.setState({partyCode:hostNumber.toString()})
-
-        })
+      const roomsRef = firebase.database().ref('rooms')
+      this.setState({ roomsRef })
+      roomsRef.once('value', (snap) => {
+        const rooms = snap.val() ? Object.keys(snap.val()) : []
+        // gen random 5 digit
+        let hostNumber = Math.floor(Math.random() * 90000) + 10000;
+        while (hostNumber in rooms) {
+          hostNumber = Math.floor(Math.random() * 90000) + 10000;
+        }
+        this.setState({ partyCode: hostNumber.toString() })
+      })
     }
 
-    render() {
-        return(
-            <SafeAreaView style={styles.container}>
+
+    _setupRoom = () => {
+      const { roomsRef, partyCode } = this.state
+      roomsRef.child(partyCode).set({
+        password: this.state.password,
+        startedAt: firebase.database.ServerValue.TIMESTAMP,
+        songs: [{ placeholder: 'if this is empty, it will not set a val you need to account for this' }],
+      })
+    }
+
+     _initRoom = () => {
+       const { partyCode, password, canProceed } = this.state
+       if (canProceed) {
+         this._setupRoom()
+         this.props.navigation.navigate('Playing', {
+           roomInfo: {
+             partyCode,
+             password
+           },
+         })
+       }
+     }
+
+        _handlePwChange = (password) => {
+          this.setState({ password })
+          password.length === 4 ? this.setState({ canProceed: true }) : null
+        }
+
+        render() {
+            return (
+              <SafeAreaView style={styles.container}>
                 <Text style={styles.h1}>Your party code is:</Text>
                 <Text style={styles.h1}>{this.state.partyCode}</Text>
                 <Text style={styles.h1}>Enter your password:</Text>
                 <SmoothPinCodeInput
-                    cellSize={36}
-                    codeLength={4}
-                    value={this.state.password}
-                    onTextChange={this._handlePwChange}
-                    />
-                <TouchableOpacity 
-                disabled={!this.state.canProceed}
-                onPress={this._initRoom}>
-                    <View style={this.state.canProceed ? styles.buttonContainer : {...styles.buttonContainer, backgroundColor: "#dddddd"} }>
+                  cellSize={36}
+                  codeLength={4}
+                  value={this.state.password}
+                  onTextChange={this._handlePwChange}
+                />
+                <TouchableOpacity
+                  disabled={!this.state.canProceed}
+                  onPress={this._initRoom}
+                >
+                  <View style={this.state.canProceed ? styles.buttonContainer : { ...styles.buttonContainer, backgroundColor: '#dddddd' }}>
                     <Text
-                    style={styles.button}
-                    // onPress={() => this.onPress()}
-                    color="#fff"
+                      style={styles.button}
+                          // onPress={() => this.onPress()}
+                      color="#fff"
                     >
-                    Get Started
+                      Get Started
                     </Text>
-                </View>
+                  </View>
                 </TouchableOpacity>
-                
-            </SafeAreaView>
-        );
-    }
-    _setupRoom = () => {
-        const {roomsRef , partyCode} = this.state
-            roomsRef.child(partyCode).set({
-                password : this.state.password,
-                startedAt: firebase.database.ServerValue.TIMESTAMP,
-                songs : [{placeholder:'if this is empty, it will not set a val you need to account for this'}],
-            })       
-         }
-
-     _initRoom = () => {
-         const {partyCode ,password,canProceed} = this.state
-        if(canProceed){
-            this._setupRoom()
-            this.props.navigation.navigate('Playing', {
-                roomInfo: {
-                    partyCode,
-                    password
-                },
-            })
-        }
-        }
-
-        _handlePwChange = (password) => {
-            this.setState({password})
-            password.length === 4 ? this.setState({canProceed:true}) : null
-    }
-    
+      
+              </SafeAreaView>
+            );
+          }
 }
 
 
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#000',
-        alignItems: 'center',
-        width: '100%',
-    },
-    h1: {
-        color: 'white',
-        fontSize: 30,
-    },
-    buttonContainer: {
-        backgroundColor: '#008F68',
-        borderRadius: 5,
-        paddingLeft: 50,
-        paddingRight: 50,
-        paddingTop: 30,
-        paddingBottom: 30,
-        margin: 50,
-    },
-    button: {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    alignItems: 'center',
+    width: '100%',
+  },
+  h1: {
+    color: 'white',
+    fontSize: 30,
+  },
+  buttonContainer: {
+    backgroundColor: '#008F68',
+    borderRadius: 5,
+    paddingLeft: 50,
+    paddingRight: 50,
+    paddingTop: 30,
+    paddingBottom: 30,
+    margin: 50,
+  },
+  button: {
     fontSize: 20,
     color: 'white',
-    }
+  }
 });
