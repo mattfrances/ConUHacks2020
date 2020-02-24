@@ -48,7 +48,6 @@ const myData = [
 
 export default class Queue extends Component {
     state = {
-      // eslint-disable-next-line react/no-unused-state
       data: myData,
     }
 

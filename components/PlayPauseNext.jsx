@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-// eslint-disable-next-line import/no-unresolved
 import Icon from 'react-native-vector-icons/Feather';
 import {
   View,
