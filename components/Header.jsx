@@ -12,18 +12,18 @@ import {
 } from 'react-native';
 
 export default class Header extends Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <Ionicons name='ios-arrow-back' style={styles.icon} onPress={() => this.props.navigation.goBack()}/>
-                <Text style={styles.message}>{this.props.title || "houseParty"}</Text>
-            </View>
-        );
-    }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Ionicons name="ios-arrow-back" style={styles.icon} onPress={() => this.props.navigation.goBack()} />
+        <Text style={styles.message}>{this.props.title || 'houseParty'}</Text>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

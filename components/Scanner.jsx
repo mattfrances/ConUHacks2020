@@ -33,6 +33,7 @@ export default function Scanner({navigation}) {
         justifyContent: 'flex-end',
       }}>
       <BarCodeScanner
+        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
