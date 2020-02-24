@@ -193,7 +193,7 @@ export default class MusicPlayer extends React.Component {
     const cloneState = {...this.state}
     const{songArray} = cloneState
     // console.log(songArray)
-    songArray.pop()
+    songArray.shift()
     console.log(songArray)
     this.setState({songArray:songArray})
   }

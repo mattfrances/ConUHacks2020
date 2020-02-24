@@ -7,6 +7,40 @@ import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
 import VoteUpNext from './VoteUpNext';
 
+const myData = [
+	{
+	  title: 'HUMBLE',
+	  artist: 'Kendrick'
+	},
+	{
+	  title: 'Foo',
+	  artist: 'Bar'
+	},
+	{
+	  title: 'One',
+	  artist: 'Marley'
+	},
+	{
+	  title: 'Kill',
+	  artist: 'Menow'
+	},
+	{
+	  title: 'Song',
+	  artist: 'Artist'
+	},
+	{
+	  title: 'Song',
+	  artist: 'Artist'
+	},
+	{
+	  title: 'Song',
+	  artist: 'Artist'
+	},
+	{
+	  title: 'Song',
+	  artist: 'Artist'
+	},
+  ];
 
 const audioBookPlaylist = [
 	{
@@ -28,7 +62,8 @@ const audioBookPlaylist = [
 export default class MusicPlayer extends React.Component {
     state = {
         roomInfo:null,
-        currentIndex: 0,
+		currentIndex: 0,
+		songArray : myData,
 	}
 		componentDidMount() {
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
@@ -36,7 +71,7 @@ export default class MusicPlayer extends React.Component {
 
 	renderFileInfo() {
 		const  playbackInstance  = this.props.screenProps.playbackInstance
-
+//fix this or remove
 		return playbackInstance ? (
 			<View style={styles.trackInfo}>
 				<Text style={[styles.trackInfoText, styles.largeText]}>
@@ -52,12 +87,22 @@ export default class MusicPlayer extends React.Component {
 	onBackButtonPressed = () => {
 		this.props.navigation.goBack()
 	}
+
+	_onDownvote = () => {
+		const cloneState = {...this.state}
+		const{songArray} = cloneState
+		// console.log(songArray)
+		songArray.shift()
+		console.log(songArray)
+		this.setState({songArray:songArray})
+	  }
 	
 	render() {
 
-        // let currentIndex = 0;
+        let currentIndex = 0;
 
-		const {roomInfo} =this.state
+    const {roomInfo, songArray} =this.state
+    
 		
 		return (
             <SafeAreaView style={styles.container}>
@@ -74,8 +119,15 @@ export default class MusicPlayer extends React.Component {
                 url="https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"
             />
 			{/* <PlayPauseNext /> */}
-            <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
-		    <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
+            <TrackDetails 
+            title={audioBookPlaylist[this.state.currentIndex].title} 
+            artist={audioBookPlaylist[this.state.currentIndex].author} 
+            navigation={this.props.navigation}
+            songs = {this.state.songArray}
+            onUpvote = {(e) => console.log("updates parent state")}
+            onDownvote = {this._onDownvote}
+            />
+		    <VoteUpNext genre title={songArray[1] && songArray[1].title || "Add a song"} artist={ songArray[1] && songArray[1].artist || "Something goes here"} onDownvote={this._onDownvote}/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,
