@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-
+import Queue from './Queue'
 import {
   View,
   Text,
@@ -13,8 +13,15 @@ import {
 
 export default class TrackDetails extends Component {
 
+  state = {
+    visible: false
+  }
   render() {
+    const {songs , onDownvote} = this.props
+    const { visible } = this.state
     return (
+      <View>
+        <Queue songs={songs} onDownvote={onDownvote} visible={visible} onClose = {() => this.setState({visible:false})} />
       <View style={styles.container}>
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Search', {
                         roomId: this.props.roomId
@@ -29,7 +36,7 @@ export default class TrackDetails extends Component {
           <Text style={styles.title}>{this.props.title}</Text>
           <Text style={styles.artist}>{this.props.artist}</Text>
         </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Queue')}>
+        <TouchableOpacity onPress={() => this.setState({visible:true})}>
             <Icon 
                 name= "menu" 
                 size={35} 
@@ -37,9 +44,14 @@ export default class TrackDetails extends Component {
             />
         </TouchableOpacity>
       </View>
+      </View>
     );
   }
 }
+_hideModal = () => {
+this.setState({visible:false})
+}
+
 // const TrackDetails = ({
 //   title,
 //   artist,

@@ -4,69 +4,35 @@ import {
   View,
   Text,
   StyleSheet,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import VoteUpNext from './VoteUpNext';
 
-
-
-
-const myData = [
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-  {
-    title: 'Song',
-    artist: 'Artist'
-  },
-];
-
 export default class Queue extends Component {
-    state = {
-      data: myData,
+    componentDidUpdate(){
+        console.log('q udate')
+        console.log(this.props.visible)
     }
-
     render() {
-      const { navigation } = this.props
+      const {visible, songs, onClose, onDownvote} = this.props
+    //   const { songs, onDownvote } = navigation.state.params
       return (
+          <Modal
+          animationType="fade"
+          transparent={false}
+          visible={visible}
+          onRequestClose={onClose}
+          >
         <SafeAreaView style={styles.container}>
           <View style={styles.headerContainer}>
-            <Ionicons name="ios-arrow-back" style={styles.headerIcon} onPress={() => navigation.goBack()} />
+            <Ionicons name="ios-arrow-back" style={styles.headerIcon} onPress={onClose} />
             <Text style={styles.headerMessage}>Queue</Text>
           </View>
-          <VoteUpNext title="HUMBLE" artist="Kendrick Lamaar" />
-          <VoteUpNext title="Hotline Bling" artist="Drake" />
-          <VoteUpNext title="Snow" artist="Red Hot Chilli Peppers" />
-          <VoteUpNext title="Thriller" artist="Michael Jackson" />
-          <VoteUpNext title="Piano Man" artist="Billie Joel" />
-          <VoteUpNext title="Life is Good" artist="Future" />
-          <VoteUpNext title="Panda" artist="Desiigner" />
+          {songs.length === 0 && <Text style={{color:"white"}} > "Add songs to start the party"</Text>}
+          {songs.map((song,i) => <VoteUpNext key={i} title={song.title} artist={song.artist} onDownvote={onDownvote} />)}
         </SafeAreaView>
+        </Modal>
       );
     }
 }

@@ -7,6 +7,40 @@ import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
 import VoteUpNext from './VoteUpNext';
 
+const myData = [
+  {
+    title: 'HUMBLE',
+    artist: 'Kendrick'
+  },
+  {
+    title: 'Foo',
+    artist: 'Bar'
+  },
+  {
+    title: 'One',
+    artist: 'Marley'
+  },
+  {
+    title: 'Kill',
+    artist: 'Menow'
+  },
+  {
+    title: 'Song',
+    artist: 'Artist'
+  },
+  {
+    title: 'Song',
+    artist: 'Artist'
+  },
+  {
+    title: 'Song',
+    artist: 'Artist'
+  },
+  {
+    title: 'Song',
+    artist: 'Artist'
+  },
+];
 
 const audioBookPlaylist = [
 	{
@@ -32,7 +66,8 @@ export default class MusicPlayer extends React.Component {
 		currentIndex: 0,
 		volume: 1.0,
 		roomInfo:null,
-		isBuffering: true
+    isBuffering: true,
+    songArray : myData,
 	}
 
 		async componentDidMount() {
@@ -151,13 +186,24 @@ export default class MusicPlayer extends React.Component {
 	onBackButtonPressed = () => {
 		this.handlePlayPause()
 		this.props.navigation.goBack()
-	}
+  }
+  
+
+  _onDownvote = () => {
+    const cloneState = {...this.state}
+    const{songArray} = cloneState
+    // console.log(songArray)
+    songArray.pop()
+    console.log(songArray)
+    this.setState({songArray:songArray})
+  }
 	
 	render() {
 
         let currentIndex = 0;
 
-		const {roomInfo} =this.state
+    const {roomInfo, songArray} =this.state
+    
 		
 		return (
             <SafeAreaView style={styles.container}>
@@ -174,7 +220,14 @@ export default class MusicPlayer extends React.Component {
                 url="https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"
             />
 			{/* <PlayPauseNext /> */}
-            <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
+            <TrackDetails 
+            title={audioBookPlaylist[this.state.currentIndex].title} 
+            artist={audioBookPlaylist[this.state.currentIndex].author} 
+            navigation={this.props.navigation}
+            songs = {this.state.songArray}
+            onUpvote = {(e) => console.log("updates parent state")}
+            onDownvote = {this._onDownvote}
+            />
 			<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
 						{this.state.isPlaying ? (
 							<Ionicons name='ios-pause' size={48} color='#444' />
@@ -182,7 +235,7 @@ export default class MusicPlayer extends React.Component {
 							<Ionicons name='ios-play-circle' size={48} color='#444' />
 						)}
 					</TouchableOpacity>
-		    <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
+		    <VoteUpNext genre title={songArray[0] && songArray[0].title || "Add a song"} artist={ songArray[0] && songArray[0].artist || "Something goes here"} onDownvote={this._onDownvote}/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,
