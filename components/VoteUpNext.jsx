@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-
+import { uuid } from 'uuidv4';
 import {
   View,
   Text,
@@ -17,37 +17,39 @@ export default class VoteUpNext extends Component {
             thumbsUpPressed: false,
         }
 
-    onDownVotePressed = (t,a) => {
+    onDownVotePressed = (i) => {
         const { onDownvote } = this.props
-        console.log(`Thumbs down pressed for ${t}`);
+        console.log(`Thumbs down pressed for ${i}`);
             this.setState(prevState => ({
                 thumbsUpPressed:false,
                 thumbsDownPressed: !prevState.thumbsDownPressed
               }));
         //pass a unique id to downvote ideally
-        onDownvote()
+        onDownvote(i,this.state.thumbsDownPressed,this.state.thumbsUpPressed)
         
     }
 
-    onUpVotePressed = () => {
+    onUpVotePressed = (i) => {
+        const { onUpvote } = this.props
         console.log("Thumbs up pressed.");
             this.setState(prevState => ({
                 thumbsDownPressed: false,
                 thumbsUpPressed: !prevState.thumbsUpPressed
-                }));
-        
+            })); 
+            onUpvote(i, this.state.thumbsUpPressed, this.state.thumbsDownPressed)
     }
 
     render() {
-        const {title , artist } = this.props
+        const {title , artist, upvotes, downvotes, uid} = this.props
         return (
             <View style={{flex:1, margin:0,flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
-                <TouchableOpacity onPress={() => this.onDownVotePressed(title,artist)}>
+                <TouchableOpacity onPress={() => this.onDownVotePressed(uid)}>
                     <Icon 
                         name= "thumbs-down" 
                         size={60} 
                         color={this.state.thumbsDownPressed ? "#ff0000" : "#fff"}
                     />
+                    <Text style={styles.artist}>{downvotes || 0}</Text>
                 </TouchableOpacity>
                 <View style={{ alignItems: "center" }}>
                 {this.props.genre && 
@@ -57,12 +59,13 @@ export default class VoteUpNext extends Component {
                 <Text style={styles.artist}>{artist}</Text>
                 </View>
                 
-                <TouchableOpacity onPress={() => this.onUpVotePressed()}>
+                <TouchableOpacity onPress={() => this.onUpVotePressed(uid)}>
                     <Icon 
                         name= "thumbs-up" 
                         size={60} 
                         color={this.state.thumbsUpPressed ? "#33cc33" : "#fff"}
                     />
+                    <Text style={styles.artist}>{upvotes || 0}</Text>
                 </TouchableOpacity>
             </View>
         );

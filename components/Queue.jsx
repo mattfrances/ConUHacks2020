@@ -9,13 +9,11 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import VoteUpNext from './VoteUpNext';
 
+
 export default class Queue extends Component {
-    componentDidUpdate(){
-        console.log('q udate')
-        console.log(this.props.visible)
-    }
+    
     render() {
-      const {visible, songs, onClose, onDownvote} = this.props
+      const {visible, songs, onClose, onDownvote, onUpvote} = this.props
     //   const { songs, onDownvote } = navigation.state.params
       return (
           <Modal
@@ -30,7 +28,7 @@ export default class Queue extends Component {
             <Text style={styles.headerMessage}>Queue</Text>
           </View>
           {songs.length === 0 && <Text style={{color:"white"}} > "Add songs to start the party"</Text>}
-          {songs.map((song,i) => <VoteUpNext key={i} title={song.title} artist={song.artist} onDownvote={onDownvote} />)}
+          {songs.map((song,i) => <VoteUpNext key={i} title={song.title} artist={song.artist} onDownvote={onDownvote} onUpvote={onUpvote} uid = {song.uid} upvotes={song.upvotes} downvotes={song.downvotes}/>)}
         </SafeAreaView>
         </Modal>
       );
