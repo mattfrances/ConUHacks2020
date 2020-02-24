@@ -12,37 +12,37 @@ import {
 } from 'react-native';
 
 export default class VoteUpNext extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
+       state = {
             thumbsDownPressed: false,
             thumbsUpPressed: false,
         }
-    }
 
-    onDownVotePressed = () => {
-        console.log("Thumbs down pressed.");
-        if (!this.state.thumbsUpPressed) {
+    onDownVotePressed = (t,a) => {
+        const { onDownvote } = this.props
+        console.log(`Thumbs down pressed for ${t}`);
             this.setState(prevState => ({
+                thumbsUpPressed:false,
                 thumbsDownPressed: !prevState.thumbsDownPressed
               }));
-        }
+        //pass a unique id to downvote ideally
+        onDownvote()
+        
     }
 
     onUpVotePressed = () => {
         console.log("Thumbs up pressed.");
-        if (!this.state.thumbsDownPressed) {
             this.setState(prevState => ({
+                thumbsDownPressed: false,
                 thumbsUpPressed: !prevState.thumbsUpPressed
                 }));
-        }
+        
     }
 
     render() {
+        const {title , artist } = this.props
         return (
-            <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
-                <TouchableOpacity onPress={() => this.onDownVotePressed()}>
+            <View style={{flex:1, margin:0,flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
+                <TouchableOpacity onPress={() => this.onDownVotePressed(title,artist)}>
                     <Icon 
                         name= "thumbs-down" 
                         size={60} 
@@ -53,8 +53,8 @@ export default class VoteUpNext extends Component {
                 {this.props.genre && 
                     <Text style={styles.title}>Next Up:</Text>
                 }
-                <Text style={styles.title}>{this.props.title}</Text>
-                <Text style={styles.artist}>{this.props.artist}</Text>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.artist}>{artist}</Text>
                 </View>
                 
                 <TouchableOpacity onPress={() => this.onUpVotePressed()}>

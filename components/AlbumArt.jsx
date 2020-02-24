@@ -1,12 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   View,
-  Text,
   StyleSheet,
   Image,
-  TouchableHighlight,
-  TouchableOpacity,
   Dimensions,
 } from 'react-native';
 
@@ -15,15 +12,15 @@ const AlbumArt = ({
 }) => (
   <View style={styles.container}>
     <Image
-    style={styles.image}
-    source={{uri: url}}
+      style={styles.image}
+      source={{ uri: url }}
     />
   </View>
 );
 
 export default AlbumArt;
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const imageSize = width - 48;
 
 const styles = StyleSheet.create({
@@ -35,4 +32,4 @@ const styles = StyleSheet.create({
     width: imageSize,
     height: imageSize,
   },
-})
+});
