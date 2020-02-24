@@ -55,7 +55,7 @@ export default class JoinParty extends Component {
       const { navigation } = this.props
       const { partyCode, password, canProceed } = this.state
       if (canProceed) {
-        navigation.navigate('Playing', {
+        navigation.navigate('Guest', {
           roomInfo: {
             partyCode,
             password

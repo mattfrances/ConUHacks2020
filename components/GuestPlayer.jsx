@@ -27,113 +27,14 @@ const audioBookPlaylist = [
 
 export default class MusicPlayer extends React.Component {
     state = {
-		isPlaying: false,
-		// playbackInstance: null, now a prop for safe unmount
-		currentIndex: 0,
-		volume: 1.0,
-		roomInfo:null,
-		isBuffering: true
+        roomInfo:null,
+        currentIndex: 0,
 	}
-
-		async componentDidMount() {
+		componentDidMount() {
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
-			try {
-				await Audio.setAudioModeAsync({
-					allowsRecordingIOS: false,
-					interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-					playsInSilentModeIOS: true,
-					interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-					shouldDuckAndroid: true,
-					staysActiveInBackground: true,
-					playThroughEarpieceAndroid: false
-				})
-	
-				this.loadAudio()
-			} catch (e) {
-				console.log(e)
-			}
-		}
-	async componentWillUnmount() {
-		const  playbackInstance  = this.props.screenProps.playbackInstance
-		await playbackInstance.unloadAsync()
-		
-	}
-
-
-	async loadAudio() {
-		const { currentIndex, isPlaying, volume } = this.state
-
-		const roomId = this.props.navigation.getParam('roomId');
-		// console.log(this.props.screenProps.data[roomId].songs);
-
-		try {
-			const playbackInstance = this.props.screenProps.playbackInstance
-			const source = {
-				uri: 'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3'
-			}
-
-
-			const status = {
-				shouldPlay: isPlaying,
-				volume: volume
-			}
-
-			// this does not seem to be necessary and it makes unmounting more difficult so rm for now
-			// playbackInstance.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
-			await playbackInstance.loadAsync(source, status, false)
-			// this.setState({
-			// 	playbackInstance
-			// })
-		} catch (e) {
-			console.log(e)
-		}
-
-		//no
-		// this.handlePlayPause()
-	}
-
-	// onPlaybackStatusUpdate = status => {
-	// 	this.setState({
-	// 		isBuffering: status.isBuffering
-	// 	})
-	// }
-
-	handlePlayPause = async () => {
-		const { isPlaying} = this.state
-		const  playbackInstance  = this.props.screenProps.playbackInstance
-		isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
-
-		this.setState({
-			isPlaying: !isPlaying
-		})
-	}
-
-	handlePreviousTrack = async () => {
-		const { isPlaying} = this.state
-		const  playbackInstance  = this.props.screenProps.playbackInstance
-		if (playbackInstance) {
-			await playbackInstance.unloadAsync()
-			this.setState({
-				currentIndex : (currentIndex === 0 ? audioBookPlaylist.length -1 : currentIndex-1)
-			});
-			this.loadAudio()
-		}
-	}
-
-	handleNextTrack = async () => {
-		const { isPlaying} = this.state
-		const  playbackInstance  = this.props.screenProps.playbackInstance
-		if (playbackInstance) {
-			await playbackInstance.unloadAsync()
-			this.setState({
-				currentIndex: (currentIndex+1 > audioBookPlaylist.length - 1 ? 0 : currentIndex+1)
-			});
-			this.loadAudio()
-		}
-	}
+        }
 
 	renderFileInfo() {
-		const { isPlaying} = this.state
 		const  playbackInstance  = this.props.screenProps.playbackInstance
 
 		return playbackInstance ? (
@@ -149,13 +50,12 @@ export default class MusicPlayer extends React.Component {
 	}
 	
 	onBackButtonPressed = () => {
-		this.handlePlayPause()
 		this.props.navigation.goBack()
 	}
 	
 	render() {
 
-        let currentIndex = 0;
+        // let currentIndex = 0;
 
 		const {roomInfo} =this.state
 		
@@ -175,13 +75,6 @@ export default class MusicPlayer extends React.Component {
             />
 			{/* <PlayPauseNext /> */}
             <TrackDetails title={audioBookPlaylist[this.state.currentIndex].title} artist={audioBookPlaylist[this.state.currentIndex].author} navigation={this.props.navigation} roomId={this.props.navigation.getParam('roomId')} />
-			<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
-						{this.state.isPlaying ? (
-							<Ionicons name='ios-pause' size={48} color='#444' />
-						) : (
-							<Ionicons name='ios-play-circle' size={48} color='#444' />
-						)}
-					</TouchableOpacity>
 		    <VoteUpNext genre title="HUMBLE" artist="Kendrick Lamaar"/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
@@ -194,6 +87,7 @@ export default class MusicPlayer extends React.Component {
 		)
 	}
 }
+
 
 const styles = StyleSheet.create({
 	// container: {

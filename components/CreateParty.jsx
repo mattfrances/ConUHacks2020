@@ -8,7 +8,7 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 
 export default class CreateParty extends Component {
     state = {
-      partyCode: 0,
+      partyCode: "...loading",
       password: '',
       roomsRef: null,
       canProceed: false,
@@ -24,6 +24,10 @@ export default class CreateParty extends Component {
         while (hostNumber in rooms) {
           hostNumber = Math.floor(Math.random() * 90000) + 10000;
         }
+        //once assigned room we reserve it (unlikely to collide but you never know)
+        roomsRef.child(hostNumber).update({
+          isTempReservation : true,
+        })
         this.setState({ partyCode: hostNumber.toString() })
       })
     }
@@ -32,16 +36,18 @@ export default class CreateParty extends Component {
     _setupRoom = () => {
       const { password } = this.state
       const { roomsRef, partyCode } = this.state
-      roomsRef.child(partyCode).set({
+      roomsRef.child(partyCode).update({
         password,
+        isTempReservation : false,
         startedAt: firebase.database.ServerValue.TIMESTAMP,
-        songs: [{ placeholder: 'if this is empty, it will not set a val you need to account for this' }],
+        // do not set songs because when someone returns back, they can keep their own room and freeze it
+        // songs: [{ placeholder: 'if this is empty, it will not set a val you need to account for this' }],
       })
     }
 
      _initRoom = () => {
        const { partyCode, password, canProceed } = this.state
-       const { navigation } = this.state
+       const { navigation } = this.props
        if (canProceed) {
          this._setupRoom()
          navigation.navigate('Playing', {

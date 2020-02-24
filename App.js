@@ -5,6 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Home from './components/Home';
 import Search from './components/Search';
 import MusicPlayer from './components/MusicPlayer';
+import GuestPlayer from './components/GuestPlayer';
 import CreateParty from './components/CreateParty';
 import JoinParty from './components/JoinParty';
 import Queue from './components/Queue';
@@ -82,6 +83,7 @@ const AppNavigator = createStackNavigator(
     Home: Home,
     Search: Search,
     Playing: MusicPlayer,
+    Guest : GuestPlayer,
     CreateParty: CreateParty,
     JoinParty: JoinParty,
     Queue: Queue,
