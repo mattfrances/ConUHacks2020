@@ -20,8 +20,10 @@ export default class JoinParty extends Component {
         <Text style={styles.h1}>Party code:{partyCode}</Text>
           <Text style={styles.h1}>Party pin: {password}</Text>
           <QRCode
+          color={'orange'}
+          backgroundColor="purple"
           size={300}
-           value= {JSON.stringify(roomInfo)}
+          value= {JSON.stringify(roomInfo)}
            />
           </SafeAreaView>
         );
