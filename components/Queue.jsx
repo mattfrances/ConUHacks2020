@@ -19,7 +19,7 @@ export default class Queue extends Component {
     //   const { songs, onDownvote } = navigation.state.params
       return (
           <Modal
-          animationType="fade"
+          animationType="slide"
           transparent={false}
           visible={visible}
           onRequestClose={onClose}
