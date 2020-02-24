@@ -1,38 +1,40 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { Card } from 'react-native-elements';
+import React, { PureComponent } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default class HomePage extends React.Component {
+export default class HomePage extends PureComponent {
   render() {
+    const { navigation } = this.props
     return (
       // <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.h1}>houseParty</Text>
         <View>
 
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('JoinParty')}>
+          <TouchableOpacity onPress={() => navigation.navigate('JoinParty')}>
             <View style={styles.buttonContainer}>
-            <Text
-              style={styles.button}
+              <Text
+                style={styles.button}
               // onPress={() => this.onPress()}
-              color="#fff"
-            >
-              Join Party
-            </Text>
-          </View>
+                color="#fff"
+              >
+                Join Party
+              </Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('CreateParty')}>
+          <TouchableOpacity onPress={() => navigation.navigate('CreateParty')}>
             <View style={styles.buttonContainer}>
-            <Text
-              style={styles.button}
+              <Text
+                style={styles.button}
               // onPress={() => this.onPress()}
-              color="#fff"
-            >
-              Create Party
-            </Text>
-          </View>
+                color="#fff"
+              >
+                Create Party
+              </Text>
+            </View>
           </TouchableOpacity>
 
         </View>

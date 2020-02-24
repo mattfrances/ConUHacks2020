@@ -5,6 +5,7 @@ module.exports = {
       'jest': true,
     },
     'rules': {
+      "no-underscore-dangle":0,
         "linebreak-style": 0,
         "react/state-in-constructor": 0,
         "semi": 0,

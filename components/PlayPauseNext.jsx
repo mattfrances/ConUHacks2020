@@ -1,40 +1,40 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+// eslint-disable-next-line import/no-unresolved
 import Icon from 'react-native-vector-icons/Feather';
-
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  TouchableHighlight,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 
-export default class PlayPauseNext extends Component {
-
+export default class PlayPauseNext extends PureComponent {
   render() {
+    const {
+      navigation, roomId, title, artist
+    } = this.props
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Search', {
-                        roomId: this.props.roomId
-                    })}>
-            <Icon 
-                name= "search" 
-                size={35} 
-                color="rgba(255, 255, 255, 0.72)"
-            />
+        <TouchableOpacity onPress={() => navigation.navigate('Search', {
+          roomId
+        })}
+        >
+          <Icon
+            name="search"
+            size={35}
+            color="rgba(255, 255, 255, 0.72)"
+          />
         </TouchableOpacity>
         <View style={styles.detailsWrapper}>
-          <Text style={styles.title}>{this.props.title}</Text>
-          <Text style={styles.artist}>{this.props.artist}</Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.artist}>{artist}</Text>
         </View>
-        <TouchableOpacity onPress={() => console.log("List queue.")}>
-            <Icon 
-                name= "menu" 
-                size={35} 
-                color="rgba(255, 255, 255, 0.72)"
-            />
+        <TouchableOpacity onPress={() => console.log('List queue.')}>
+          <Icon
+            name="menu"
+            size={35}
+            color="rgba(255, 255, 255, 0.72)"
+          />
         </TouchableOpacity>
       </View>
     );
@@ -50,9 +50,9 @@ export default class PlayPauseNext extends Component {
 // }) => (
 //   <View style={styles.container}>
 //     <TouchableOpacity onPress={() => navigation('Search')}>
-//         <Icon 
-//             name= "search" 
-//             size={35} 
+//         <Icon
+//             name= "search"
+//             size={35}
 //             color="rgba(255, 255, 255, 0.72)"
 //         />
 //     </TouchableOpacity>
@@ -61,9 +61,9 @@ export default class PlayPauseNext extends Component {
 //       <Text style={styles.artist} onPress={onArtistPress}>{artist}</Text>
 //     </View>
 //     <TouchableOpacity onPress={() => console.log("List queue.")}>
-//         <Icon 
-//             name= "menu" 
-//             size={35} 
+//         <Icon
+//             name= "menu"
+//             size={35}
 //             color="rgba(255, 255, 255, 0.72)"
 //         />
 //     </TouchableOpacity>

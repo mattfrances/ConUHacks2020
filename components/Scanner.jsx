@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import {
+  Text, View, StyleSheet
+} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-export default function Scanner({navigation}) {
+export default function Scanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   useEffect(() => {
@@ -12,6 +14,7 @@ export default function Scanner({navigation}) {
     })();
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     navigation.state.params.onScanSuccess(data)
@@ -31,7 +34,8 @@ export default function Scanner({navigation}) {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-      }}>
+      }}
+    >
       <BarCodeScanner
         barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}

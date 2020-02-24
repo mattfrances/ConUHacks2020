@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button
+  SafeAreaView, StyleSheet, Text, TouchableOpacity, View
 } from 'react-native';
 import * as firebase from 'firebase';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
@@ -30,9 +30,10 @@ export default class CreateParty extends Component {
 
 
     _setupRoom = () => {
+      const { password } = this.state
       const { roomsRef, partyCode } = this.state
       roomsRef.child(partyCode).set({
-        password: this.state.password,
+        password,
         startedAt: firebase.database.ServerValue.TIMESTAMP,
         songs: [{ placeholder: 'if this is empty, it will not set a val you need to account for this' }],
       })
@@ -40,9 +41,10 @@ export default class CreateParty extends Component {
 
      _initRoom = () => {
        const { partyCode, password, canProceed } = this.state
+       const { navigation } = this.state
        if (canProceed) {
          this._setupRoom()
-         this.props.navigation.navigate('Playing', {
+         navigation.navigate('Playing', {
            roomInfo: {
              partyCode,
              password
@@ -53,39 +55,42 @@ export default class CreateParty extends Component {
 
         _handlePwChange = (password) => {
           this.setState({ password })
-          password.length === 4 ? this.setState({ canProceed: true }) : null
+          if (password.length === 4) {
+            this.setState({ canProceed: true })
+          }
         }
 
         render() {
-            return (
-              <SafeAreaView style={styles.container}>
-                <Text style={styles.h1}>Your party code is:</Text>
-                <Text style={styles.h1}>{this.state.partyCode}</Text>
-                <Text style={styles.h1}>Enter your password:</Text>
-                <SmoothPinCodeInput
-                  cellSize={36}
-                  codeLength={4}
-                  value={this.state.password}
-                  onTextChange={this._handlePwChange}
-                />
-                <TouchableOpacity
-                  disabled={!this.state.canProceed}
-                  onPress={this._initRoom}
-                >
-                  <View style={this.state.canProceed ? styles.buttonContainer : { ...styles.buttonContainer, backgroundColor: '#dddddd' }}>
-                    <Text
-                      style={styles.button}
+          const { partyCode, password, canProceed } = this.state
+          return (
+            <SafeAreaView style={styles.container}>
+              <Text style={styles.h1}>Your party code is:</Text>
+              <Text style={styles.h1}>{partyCode}</Text>
+              <Text style={styles.h1}>Enter your password:</Text>
+              <SmoothPinCodeInput
+                cellSize={36}
+                codeLength={4}
+                value={password}
+                onTextChange={this._handlePwChange}
+              />
+              <TouchableOpacity
+                disabled={!canProceed}
+                onPress={this._initRoom}
+              >
+                <View style={canProceed ? styles.buttonContainer : { ...styles.buttonContainer, backgroundColor: '#dddddd' }}>
+                  <Text
+                    style={styles.button}
                           // onPress={() => this.onPress()}
-                      color="#fff"
-                    >
-                      Get Started
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-      
-              </SafeAreaView>
-            );
-          }
+                    color="#fff"
+                  >
+                    Get Started
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+            </SafeAreaView>
+          );
+        }
 }
 
 
