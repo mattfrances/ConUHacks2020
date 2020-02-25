@@ -6,39 +6,72 @@ import { Audio } from 'expo-av';
 import AlbumArt from './AlbumArt';
 import TrackDetails from './TrackDetails';
 import VoteUpNext from './VoteUpNext';
+import * as firebase from 'firebase'; 
 
 const myData = [
 	{
 	  title: 'HUMBLE',
-	  artist: 'Kendrick'
+	  artist: 'Kendrick',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:0
 	},
 	{
 	  title: 'Foo',
-	  artist: 'Bar'
+	  artist: 'Bar',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:1
 	},
 	{
 	  title: 'One',
-	  artist: 'Marley'
+	  artist: 'Marley',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:2
 	},
 	{
 	  title: 'Kill',
-	  artist: 'Menow'
+	  artist: 'Menow',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:3
 	},
 	{
 	  title: 'Song',
-	  artist: 'Artist'
+	  artist: 'Artist',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:4
 	},
 	{
 	  title: 'Song',
-	  artist: 'Artist'
+	  artist: 'Artist',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:5
 	},
 	{
 	  title: 'Song',
-	  artist: 'Artist'
+	  artist: 'Artist',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:6
 	},
 	{
 	  title: 'Song',
-	  artist: 'Artist'
+	  artist: 'Artist',
+	  upvotes: 0,
+	  downvotes: 0,
+	  ratio: 0,
+	  uid:7
 	},
   ];
 
@@ -65,14 +98,30 @@ export default class MusicPlayer extends React.Component {
 		currentIndex: 0,
 		songArray : myData,
 	}
+
+	roomsRef = firebase.database().ref('rooms').child(this.props.navigation.state.params.roomInfo.partyCode)
+
 		componentDidMount() {
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
+
+			//Since we don't have the api yet
+			this.roomsRef.child('songs').set(this.state.songArray)
+			this. roomsRef.on('value', (snap) => {
+			 // console.log(snap.val())
+			 sArray = snap.val().songs ? snap.val().songs : []
+			 sArray.sort((a, b) => { 					
+				   return b.ratio - a.ratio
+			   });
+			 this.setState({
+				 songArray: sArray
+			 })
+			})
         }
 
 	renderFileInfo() {
-		const  playbackInstance  = this.props.screenProps.playbackInstance
-//fix this or remove
-		return playbackInstance ? (
+		//const  playbackInstance  = this.props.screenProps.playbackInstance
+		//fix this or remove
+		return (
 			<View style={styles.trackInfo}>
 				<Text style={[styles.trackInfoText, styles.largeText]}>
 					{audioBookPlaylist[currentIndex].title}
@@ -81,22 +130,59 @@ export default class MusicPlayer extends React.Component {
 					{audioBookPlaylist[currentIndex].author}
 				</Text>
 			</View>
-		) : null
+		)
 	}
 	
 	onBackButtonPressed = () => {
 		this.props.navigation.goBack()
 	}
 
-	_onDownvote = () => {
-		const cloneState = {...this.state}
-		const{songArray} = cloneState
-		// console.log(songArray)
-		songArray.shift()
-		console.log(songArray)
-		this.setState({songArray:songArray})
-	  }
+	_onDownvote = (id,downPressed, upPressed) => {
+		this.roomsRef.child('songs').once('value', (snap) => {
+			let s = snap.val()
+			const i = s.findIndex(x => x.uid === id)
+			let dw
+			let uw = s[i].upvotes
+			if(downPressed){
+				dw = s[i].downvotes - 1
+			}
+			else if(upPressed){
+				dw = s[i].downvotes + 1
+				uw = s[i].upvotes - 1
+			}
+			else{
+				dw = s[i].downvotes + 1
+			}
+			const ratio = uw - dw
+			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
+			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
+			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
+		})
+	}
 	
+	_onUpvote = (id, upPressed, downPressed) => {
+		this.roomsRef.child('songs').once('value', (snap) => {
+			let s = snap.val()
+			const i = s.findIndex(x => x.uid === id)
+			let uw
+			let dw = s[i].downvotes
+			if(downPressed){
+				dw = s[i].downvotes - 1
+				uw = s[i].upvotes + 1
+			}
+			else if(upPressed){
+				uw = s[i].upvotes - 1
+			}
+			else{
+				uw = s[i].upvotes + 1
+			}
+			const ratio = uw - dw
+			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
+			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
+			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
+		})
+	}
+
 	render() {
 
         let currentIndex = 0;
@@ -124,10 +210,11 @@ export default class MusicPlayer extends React.Component {
             artist={audioBookPlaylist[this.state.currentIndex].author} 
             navigation={this.props.navigation}
             songs = {this.state.songArray}
-            onUpvote = {(e) => console.log("updates parent state")}
+            onUpvote = {this._onUpvote}
             onDownvote = {this._onDownvote}
             />
-		    <VoteUpNext genre title={songArray[1] && songArray[1].title || "Add a song"} artist={ songArray[1] && songArray[1].artist || "Something goes here"} onDownvote={this._onDownvote}/>
+			
+		    <VoteUpNext genre title={songArray && songArray[0] && songArray[0].title || "Add a song"} artist={ songArray && songArray[0] && songArray[0].artist || "Something goes here"} onDownvote={this._onDownvote} onUpvote={this._onUpvote} upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} uid = {songArray && songArray[0] && songArray[0].uid}/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,

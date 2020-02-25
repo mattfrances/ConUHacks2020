@@ -17,11 +17,11 @@ export default class TrackDetails extends Component {
     visible: false
   }
   render() {
-    const {songs , onDownvote} = this.props
+    const {songs , onDownvote, onUpvote} = this.props
     const { visible } = this.state
     return (
       <View>
-        <Queue songs={songs} onDownvote={onDownvote} visible={visible} onClose = {() => this.setState({visible:false})} />
+        <Queue songs={songs} onDownvote={onDownvote} onUpvote={onUpvote} visible={visible} onClose = {() => this.setState({visible:false})} />
       <View style={styles.container}>
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Search', {
                         roomId: this.props.roomId
