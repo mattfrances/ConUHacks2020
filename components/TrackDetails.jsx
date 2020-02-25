@@ -18,7 +18,7 @@ export default class TrackDetails extends Component {
   }
   render() {
     const {songs , onDownvote, onUpvote} = this.props
-    console.log(songs, 'song')
+    // console.log(songs, 'song')
     const { visible } = this.state
     return (
       <View>
