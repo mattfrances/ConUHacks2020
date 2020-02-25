@@ -8,6 +8,7 @@ import TrackDetails from './TrackDetails';
 import VoteUpNext from './VoteUpNext';
 import * as firebase from 'firebase';
 
+
 const myData = [
   {
     title: 'HUMBLE',
@@ -115,7 +116,7 @@ export default class MusicPlayer extends React.Component {
 			 // console.log(snap.val())
 			  sArray = snap.val().songs ? snap.val().songs : []
 			  sArray.sort((a, b) => { 					
-					return a.ratio - b.ratio
+					return b.ratio - a.ratio
 				});
 			  this.setState({
 				  songArray: sArray

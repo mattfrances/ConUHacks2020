@@ -14,6 +14,7 @@ const myData = [
 	  artist: 'Kendrick',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:0
 	},
 	{
@@ -21,6 +22,7 @@ const myData = [
 	  artist: 'Bar',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:1
 	},
 	{
@@ -28,6 +30,7 @@ const myData = [
 	  artist: 'Marley',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:2
 	},
 	{
@@ -35,6 +38,7 @@ const myData = [
 	  artist: 'Menow',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:3
 	},
 	{
@@ -42,6 +46,7 @@ const myData = [
 	  artist: 'Artist',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:4
 	},
 	{
@@ -49,6 +54,7 @@ const myData = [
 	  artist: 'Artist',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:5
 	},
 	{
@@ -56,6 +62,7 @@ const myData = [
 	  artist: 'Artist',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:6
 	},
 	{
@@ -63,6 +70,7 @@ const myData = [
 	  artist: 'Artist',
 	  upvotes: 0,
 	  downvotes: 0,
+	  ratio: 0,
 	  uid:7
 	},
   ];
@@ -100,16 +108,20 @@ export default class MusicPlayer extends React.Component {
 			this.roomsRef.child('songs').set(this.state.songArray)
 			this. roomsRef.on('value', (snap) => {
 			 // console.log(snap.val())
-			  this.setState({
-				  songArray: snap.val().songs ? snap.val().songs : []
-			  })
+			 sArray = snap.val().songs ? snap.val().songs : []
+			 sArray.sort((a, b) => { 					
+				   return b.ratio - a.ratio
+			   });
+			 this.setState({
+				 songArray: sArray
+			 })
 			})
         }
 
 	renderFileInfo() {
-		const  playbackInstance  = this.props.screenProps.playbackInstance
+		//const  playbackInstance  = this.props.screenProps.playbackInstance
 		//fix this or remove
-		return playbackInstance ? (
+		return (
 			<View style={styles.trackInfo}>
 				<Text style={[styles.trackInfoText, styles.largeText]}>
 					{audioBookPlaylist[currentIndex].title}
@@ -118,7 +130,7 @@ export default class MusicPlayer extends React.Component {
 					{audioBookPlaylist[currentIndex].author}
 				</Text>
 			</View>
-		) : null
+		)
 	}
 	
 	onBackButtonPressed = () => {
@@ -141,8 +153,10 @@ export default class MusicPlayer extends React.Component {
 			else{
 				dw = s[i].downvotes + 1
 			}
+			const ratio = uw - dw
 			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
 			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
+			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
 		})
 	}
 	
@@ -162,8 +176,10 @@ export default class MusicPlayer extends React.Component {
 			else{
 				uw = s[i].upvotes + 1
 			}
+			const ratio = uw - dw
 			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
 			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
+			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
 		})
 	}
 

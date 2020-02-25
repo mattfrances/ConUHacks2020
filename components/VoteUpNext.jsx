@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { uuid } from 'uuidv4';
+
 import {
   View,
   Text,
