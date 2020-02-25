@@ -129,7 +129,7 @@ export default class MusicPlayer extends React.Component {
 			this.roomsRef.child('songs').set(this.state.songArray)
 			this. roomsRef.on('value', (snap) => {
 			 // console.log(snap.val())
-			 sArray = snap.val().songs ? snap.val().songs : []
+			 let sArray = snap.val().songs ? snap.val().songs : []
 			 sArray.sort((a, b) => { 					
 				   return b.ratio - a.ratio
 			   });
@@ -167,25 +167,24 @@ export default class MusicPlayer extends React.Component {
 		this.setState({songArray:clonedMusic})
 
 
-		this.roomsRef.child('songs').once('value', (snap) => {
-			let s = snap.val()
+		this.roomsRef.child('songs').transaction((snap) => {
+			let s = snap
 			const i = s.findIndex(x => x.uid === id)
-			let dw
-			let uw = s[i].upvotes
 			if(downPressed){
-				dw = s[i].downvotes - 1
+				s[i].downvotes = s[1].downvotes-1
 			}
 			else if(upPressed){
-				dw = s[i].downvotes + 1
-				uw = s[i].upvotes - 1
+				s[i].downvotes = s[i].downvotes+1
+				s[i].upvotes = s[i].upvotes + 1
 			}
 			else{
-				dw = s[i].downvotes + 1
+				s[i].downvotes = s[i].downvotes+1
 			}
-			const ratio = uw - dw
-			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
-			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
-			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
+			const ratio = s[i].upvotes - s[i].downvotes
+			s[i].ratio = ratio
+
+			return s
+		
 		})
 	}
 	
@@ -198,25 +197,29 @@ export default class MusicPlayer extends React.Component {
 		this.setState({songArray:clonedMusic})
 
 
-		this.roomsRef.child('songs').once('value', (snap) => {
-			let s = snap.val()
+		this.roomsRef.child('songs').transaction((snap) => {
+			let s = snap
+			// console.log(snap, 'snap')
+			// let s = []
 			const i = s.findIndex(x => x.uid === id)
 			let uw
 			let dw = s[i].downvotes
 			if(downPressed){
-				dw = s[i].downvotes - 1
-				uw = s[i].upvotes + 1
+				s[i].downvotes = s[i].downvotes -1
+				s[i].upvotes = s[i].upvotes + 1
 			}
 			else if(upPressed){
-				uw = s[i].upvotes - 1
+				s[i].upvotes = s[i].upvotes - 1
 			}
 			else{
-				uw = s[i].upvotes + 1
+				s[i].upvotes = s[i].upvotes + 1
 			}
-			const ratio = uw - dw
-			this.roomsRef.child('songs').child(i).child('downvotes').set(dw)
-			this.roomsRef.child('songs').child(i).child('upvotes').set(uw)
-			this.roomsRef.child('songs').child(i).child('ratio').set(ratio)
+
+			const ratio = s[i].upvotes - s[i].downvotes 
+			s[i].ratio = ratio
+
+
+			return s
 		})
 	}
 
