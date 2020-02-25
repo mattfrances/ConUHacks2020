@@ -261,7 +261,7 @@ export default class MusicPlayer extends React.Component {
     }
   
 
-  	_onDownvote = (id,downPressed, upPressed) => {
+  	_onDownvote = (id,upPressed, downPressed) => {
 		
 		let clonedMusic = [...this.state.songArray]
 		const song = clonedMusic.find(x => x.uid === id)
