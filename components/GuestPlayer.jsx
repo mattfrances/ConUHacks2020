@@ -170,19 +170,22 @@ export default class MusicPlayer extends React.Component {
 		this.roomsRef.child('songs').transaction((snap) => {
 			let s = snap
 			const i = s.findIndex(x => x.uid === id)
+			let dw
+			let uw = s[i].upvotes
 			if(downPressed){
-				s[i].downvotes = s[1].downvotes-1
+				dw = s[i].downvotes - 1
 			}
 			else if(upPressed){
-				s[i].downvotes = s[i].downvotes+1
-				s[i].upvotes = s[i].upvotes + 1
+				dw = s[i].downvotes + 1
+				uw = s[i].upvotes - 1
 			}
 			else{
-				s[i].downvotes = s[i].downvotes+1
+				dw = s[i].downvotes + 1
 			}
-			const ratio = s[i].upvotes - s[i].downvotes
+			const ratio = uw - dw
+			s[i].downvotes = dw
+			s[i].upvotes = uw
 			s[i].ratio = ratio
-
 			return s
 		
 		})
@@ -205,20 +208,19 @@ export default class MusicPlayer extends React.Component {
 			let uw
 			let dw = s[i].downvotes
 			if(downPressed){
-				s[i].downvotes = s[i].downvotes -1
-				s[i].upvotes = s[i].upvotes + 1
+				dw = s[i].downvotes - 1
+				uw = s[i].upvotes + 1
 			}
 			else if(upPressed){
-				s[i].upvotes = s[i].upvotes - 1
+				uw = s[i].upvotes - 1
 			}
 			else{
-				s[i].upvotes = s[i].upvotes + 1
+				uw = s[i].upvotes + 1
 			}
-
-			const ratio = s[i].upvotes - s[i].downvotes 
+			const ratio = uw - dw
+			s[i].downvotes = dw
+			s[i].upvotes = uw
 			s[i].ratio = ratio
-
-
 			return s
 		})
 	}
