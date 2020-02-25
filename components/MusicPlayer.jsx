@@ -111,9 +111,10 @@ export default class MusicPlayer extends React.Component {
 		const b = a.map(element => {
 			const uid = element.uid
 			const f = this.state.songArray.find(x => x.uid === uid)
-			if(f){
+			const good = f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
+			if(good){
 				element.locallyUpvoted = f.locallyUpvoted
-				element.locallyUpvoted = f.locallyDownvoted
+				element.locallyDownvoted = f.locallyDownvoted
 			}
 			else{
 				element.locallyUpvoted = false
@@ -227,7 +228,7 @@ export default class MusicPlayer extends React.Component {
 	}
 
 	handleNextTrack = async () => {
-		const { isPlaying} = this.state
+		const { isPlaying } = this.state
 		const  playbackInstance  = this.props.screenProps.playbackInstance
 		if (playbackInstance) {
 			await playbackInstance.unloadAsync()

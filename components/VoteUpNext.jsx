@@ -28,6 +28,7 @@ export default class VoteUpNext extends Component {
 
     render() {
         const {title , artist, upvotes, downvotes, uid, locallyUpvoted, locallyDownvoted} = this.props
+        console.log(this.props)
         return (
             <View style={{flex:1, margin:0,flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
                 <TouchableOpacity onPress={() => this.onDownVotePressed(uid)}>
