@@ -104,6 +104,27 @@ export default class MusicPlayer extends React.Component {
    		songArray : myData,
 	}
 
+	_mendArrays = (a) => {
+		//a == new array from db
+		// console.log(a)
+		// console.log(this.state.songArray,"help")
+		const b = a.map(element => {
+			const uid = element.uid
+			const f = this.state.songArray.find(x => x.uid === uid)
+			if(f){
+				element.locallyUpvoted = f.locallyUpvoted
+				element.locallyUpvoted = f.locallyDownvoted
+			}
+			else{
+				element.locallyUpvoted = false
+				element.locallyDownvoted = false
+			}
+			return element
+		})
+			return b
+		}
+
+
 	roomsRef = firebase.database().ref('rooms').child(this.props.navigation.state.params.roomInfo.partyCode)
 
 		async componentDidMount() {
@@ -119,7 +140,7 @@ export default class MusicPlayer extends React.Component {
 					return b.ratio - a.ratio
 				});
 			  this.setState({
-				  songArray: sArray
+				  songArray: this._mendArrays(sArray)
 			  })
 			})
 			try {
@@ -240,6 +261,14 @@ export default class MusicPlayer extends React.Component {
   
 
   	_onDownvote = (id,downPressed, upPressed) => {
+		
+		let clonedMusic = [...this.state.songArray]
+		const song = clonedMusic.find(x => x.uid === id)
+		song.locallyDownvoted = !song.locallyDownvoted
+		song.locallyUpvoted = false
+		this.setState({songArray:clonedMusic})
+
+
 		this.roomsRef.child('songs').once('value', (snap) => {
 			let s = snap.val()
 			const i = s.findIndex(x => x.uid === id)
@@ -263,6 +292,14 @@ export default class MusicPlayer extends React.Component {
 	}
 	
 	_onUpvote = (id, upPressed, downPressed) => {
+		
+		let clonedMusic = [...this.state.songArray]
+		const song = clonedMusic.find(x => x.uid === id)
+		song.locallyUpvoted = !song.locallyUpvoted
+		song.locallyDownvoted = false
+		this.setState({songArray:clonedMusic})
+
+
 		this.roomsRef.child('songs').once('value', (snap) => {
 			let s = snap.val()
 			const i = s.findIndex(x => x.uid === id)
@@ -322,7 +359,16 @@ export default class MusicPlayer extends React.Component {
 							<Ionicons name='ios-play-circle' size={48} color='#444' />
 						)}
 					</TouchableOpacity>
-		    <VoteUpNext genre title={songArray && songArray[0] && songArray[0].title || "Add a song"} artist={ songArray && songArray[0] && songArray[0].artist || "Something goes here"} onDownvote={this._onDownvote} onUpvote={this._onUpvote} upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} uid = {songArray && songArray[0] && songArray[0].uid}/>
+			<VoteUpNext 
+				key={songArray && songArray[0] && songArray[0].uid} 
+				locallyUpvoted={songArray && songArray[0] && songArray[0].locallyUpvoted}
+				locallyDownvoted={songArray && songArray[0] && songArray[0].locallyDownvoted}
+				title={songArray && songArray[0] && songArray[0].title || "Add a song"}
+				artist={ songArray && songArray[0] && songArray[0].artist || "Something goes here"} 
+				onDownvote={this._onDownvote} onUpvote={this._onUpvote} 
+				upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} 
+				downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} 
+				uid = {songArray && songArray[0] && songArray[0].uid}/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,

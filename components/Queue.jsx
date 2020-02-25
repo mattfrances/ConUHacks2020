@@ -27,8 +27,18 @@ export default class Queue extends Component {
             <Ionicons name="ios-arrow-back" style={styles.headerIcon} onPress={onClose} />
             <Text style={styles.headerMessage}>Queue</Text>
           </View>
-          {songs.length === 0 && <Text style={{color:"white"}} > "Add songs to start the party"</Text>}
-          {songs.map((song) => <VoteUpNext key={song.uid} title={song.title} artist={song.artist} onDownvote={onDownvote} onUpvote={onUpvote} uid = {song.uid} upvotes={song.upvotes} downvotes={song.downvotes}/>)}
+          {songs && songs.length === 0  && <Text style={{color:"white"}} > "Add songs to start the party"</Text>}
+          {songs && songs.map((song) => 
+          <VoteUpNext key={song.uid} 
+          locallyUpvoted ={song.locallyUpvoted}
+          locallyDownvoted ={song.locallyDownvoted}
+          title={song.title}
+          artist={song.artist}
+          onDownvote={onDownvote}
+          onUpvote={onUpvote}
+          uid = {song.uid}
+              upvotes={song.upvotes}
+              downvotes={song.downvotes}/>)}
         </SafeAreaView>
         </Modal>
       );
