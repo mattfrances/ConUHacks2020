@@ -38,8 +38,8 @@ export default class MusicPlayer extends React.Component {
 		// console.log(a)
 		// console.log(this.state.songArray,"help")
 		const b = a.map(element => {
-			const uid = element.uid
-			const f = this.state.songArray.find(x => x.uid === uid)
+			const id = element.id
+			const f = this.state.songArray.find(x => x.id === id)
 			const good = f && f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
 			if(good){
 				element.locallyUpvoted = f.locallyUpvoted
@@ -110,7 +110,7 @@ export default class MusicPlayer extends React.Component {
 	_onDownvote = (id,upPressed, downPressed) => {
 		
 		let clonedMusic = [...this.state.songArray]
-		const song = clonedMusic.find(x => x.uid === id)
+		const song = clonedMusic.find(x => x.id === id)
 		song.locallyDownvoted = !song.locallyDownvoted
 		song.locallyUpvoted = false
 		this.setState({songArray:clonedMusic})
@@ -118,7 +118,7 @@ export default class MusicPlayer extends React.Component {
 
 		this.roomsRef.child('songs').transaction((snap) => {
 			let s = snap
-			const i = s.findIndex(x => x.uid === id)
+			const i = s.findIndex(x => x.id === id)
 			let dw
 			let uw = s[i].upvotes
 			if(downPressed){
@@ -143,7 +143,7 @@ export default class MusicPlayer extends React.Component {
 	_onUpvote = (id, upPressed, downPressed) => {
 		
 		let clonedMusic = [...this.state.songArray]
-		const song = clonedMusic.find(x => x.uid === id)
+		const song = clonedMusic.find(x => x.id === id)
 		song.locallyUpvoted = !song.locallyUpvoted
 		song.locallyDownvoted = false
 		this.setState({songArray:clonedMusic})
@@ -153,7 +153,7 @@ export default class MusicPlayer extends React.Component {
 			let s = snap
 			// console.log(snap, 'snap')
 			// let s = []
-			const i = s.findIndex(x => x.uid === id)
+			const i = s.findIndex(x => x.id === id)
 			let uw
 			let dw = s[i].downvotes
 			if(downPressed){
