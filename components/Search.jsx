@@ -46,42 +46,67 @@ export default class App extends React.Component {
   }
 
   handleOnClick = (item) => {
+    const { onAdd , songs } = this.props.navigation.state.params
+
+    const foundSong = songs.find(s => s.id === item.id)
+      //returns an objo if true or undef if false
+    if(foundSong){
+      alert('That song is already there!')
+      return false
+    }
+
     axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs/' + item.id, {
       headers: {
-        "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
+        "Authorization": "d22886a9e467526d4cbe6328fe07285d"
       }
     })
     .then(response => {
       // console.log("RESPONSE")
       // console.log(response.data.playUrl)
-      item.artwork = response.data.artist.jackets["250"]
+      // console.log(response.data.artist)
+      //pray that res has artwork of good size
+      // TODO if we care, just take the highest num in arr of jackets
+      item.artwork = response.data.artist.jackets["250"] || response.data.artist.jackets["290"] || response.data.artist.jackets["200"] || "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png"
+      // console.log(response.data.artist.jackets)
       item.uri = response.data.playUrl
-
+      item.downvotes = 0
+      item.upvotes = 0
+      item.ratio = 0
+      
+      
+      if(!this.filterFunc(item)){
+        alert("Sorry, that can't be played")
+        return false
+      }
+      
       this.setState({
         selectedSong: item
       });
-      console.log("SELECTED SONG")
-      console.log(this.state.selectedSong);
-      
-      this.addSongToQueue()
-    });
+      // console.log("SELECTED SONG")
+      // console.log(this.state.selectedSong);
+      // ah mate you need to ensure that the state is stable, this component doesnt need to store song in state
+      onAdd(item)
+      this.props.navigation.goBack();
+    }
+      );
+
   }
 
-  addSongToQueue = () => {
-    console.log("adding song to queue")
-    alert(this.state.selectedSong.title + " by " + this.state.selectedSong.artistName + " added to Queue")
-    this.props.navigation.goBack();
+  // addSongToQueue = () => {
+  //   console.log("adding song to queue")
+   
+  //   alert(this.state.selectedSong.title + " by " + this.state.selectedSong.artistName + " added to Queue")
 
-    // console.log("ROOOOM ID: " + this.props.navigation.getParam('roomId'));
-    console.log("IN ADDSONGTOQUEUE")
-    console.log(this.state.selectedSong)
-    // axios.post('http://5b25f14e.ngrok.io/add', {
-    //   "roomId": this.props.navigation.getParam('roomId'),
-    //   "song": this.state.selectedSong
-    // })
-    // .then(res => {
-    // })
-  }
+  //   // console.log("ROOOOM ID: " + this.props.navigation.getParam('roomId'));
+  //   console.log("IN ADDSONGTOQUEUE")
+  //   console.log(this.state.selectedSong)
+  //   // axios.post('http://5b25f14e.ngrok.io/add', {
+  //   //   "roomId": this.props.navigation.getParam('roomId'),
+  //   //   "song": this.state.selectedSong
+  //   // })
+  //   // .then(res => {
+  //   // })
+  // }
 
 
   search = text => {
@@ -91,6 +116,30 @@ export default class App extends React.Component {
     this.search.clear();
   };
 
+  filterFunc = (s)=> {
+    const keys = Object.keys(s)
+    let good = true
+    keys.forEach(key => {
+      if(s[key]===0){
+        good = true
+        //mf javascript...
+      }
+      else if(!s[key]){
+        good = false
+        return false
+      }
+      
+    })
+    if(!good){
+      console.log(s)
+      return false
+    }
+    else {
+      // console.log('true')
+      return true
+    }
+  }
+
 
   SearchFilterFunction(text) {
     axios.get('https://conuhacks-2020.tsp.cld.touchtunes.com/v1/songs', {
@@ -98,21 +147,38 @@ export default class App extends React.Component {
         "query": text
       },
       headers: {
-        "Authorization": "af7a95c83d730ce7697c6901c3f63c47"
+        "Authorization": "d22886a9e467526d4cbe6328fe07285d"
       }
     })
     .then(response => {
       const songs = response.data.songs;
-      let dataSongs = [];
-      songs.forEach((song, index) => {
-        //song.artwork = getSongArtwork(song.id) // call a function here to get the artwork
-        dataSongs.push(song);
 
-        // const value =  await this.getSongArtwork(song.id);
-        // console.log(value);
-      });
+      
+      // unnecessary TODO RM we need to nope in the item
+      const s = songs.filter(canson => this.filterFunc(canson))
+      // songs.forEach((song, index) => {
+      //   // if any part of the song is false we reject because firebase no like and its unstable af
+      //   const keys = Object.keys(song)
+      //   // console.log(keys)
+      //   let badFound = false
+      //   keys.forEach(k => {
+      //     console.log(k)
+      //     // console.log(songs[k])
+      //     if(!songs[k]){
+      //       badFound = true
+      //     }
+      //   })
+      //   if(badFound){
+      //       continue
+      //   }
+      //   //song.artwork = getSongArtwork(song.id) // call a function here to get the artwork
+      //   dataSongs.push(song);
+
+      //   // const value =  await this.getSongArtwork(song.id);
+      //   // console.log(value);
+      // });
       this.setState({
-        data: dataSongs
+        data: s
       });
     });
 

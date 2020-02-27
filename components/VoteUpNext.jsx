@@ -27,11 +27,11 @@ export default class VoteUpNext extends Component {
         onUpvote(i,locallyUpvoted,locallyDownvoted)    }
 
     render() {
-        const {title , artist, upvotes, downvotes, uid, locallyUpvoted, locallyDownvoted} = this.props
+        const {title , artist, upvotes, downvotes, id, locallyUpvoted, locallyDownvoted} = this.props
         // console.log(this.props)
         return (
             <View style={{flex:1, margin:0,flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" }}>
-                <TouchableOpacity onPress={() => this.onDownVotePressed(uid)}>
+                <TouchableOpacity onPress={() => this.onDownVotePressed(id)}>
                     <Icon 
                         name= "thumbs-down" 
                         size={60} 
@@ -47,7 +47,7 @@ export default class VoteUpNext extends Component {
                 <Text style={styles.artist}>{artist}</Text>
                 </View>
                 
-                <TouchableOpacity onPress={() => this.onUpVotePressed(uid)}>
+                <TouchableOpacity onPress={() => this.onUpVotePressed(id)}>
                     <Icon 
                         name= "thumbs-up" 
                         size={60} 

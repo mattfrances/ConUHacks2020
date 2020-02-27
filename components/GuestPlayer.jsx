@@ -8,72 +8,6 @@ import TrackDetails from './TrackDetails';
 import VoteUpNext from './VoteUpNext';
 import * as firebase from 'firebase'; 
 
-const myData = [
-	{
-	  title: 'HUMBLE',
-	  artist: 'Kendrick',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:0
-	},
-	{
-	  title: 'Foo',
-	  artist: 'Bar',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:1
-	},
-	{
-	  title: 'One',
-	  artist: 'Marley',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:2
-	},
-	{
-	  title: 'Kill',
-	  artist: 'Menow',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:3
-	},
-	{
-	  title: 'Song',
-	  artist: 'Artist',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:4
-	},
-	{
-	  title: 'Song',
-	  artist: 'Artist',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:5
-	},
-	{
-	  title: 'Song',
-	  artist: 'Artist',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:6
-	},
-	{
-	  title: 'Song',
-	  artist: 'Artist',
-	  upvotes: 0,
-	  downvotes: 0,
-	  ratio: 0,
-	  uid:7
-	},
-  ];
 
 const audioBookPlaylist = [
 	{
@@ -96,7 +30,7 @@ export default class MusicPlayer extends React.Component {
     state = {
         roomInfo:null,
 		currentIndex: 0,
-		songArray : myData,
+		songArray : [],
 	}
 
 	_mendArrays = (a) => {
@@ -106,7 +40,7 @@ export default class MusicPlayer extends React.Component {
 		const b = a.map(element => {
 			const uid = element.uid
 			const f = this.state.songArray.find(x => x.uid === uid)
-			const good = f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
+			const good = f && f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
 			if(good){
 				element.locallyUpvoted = f.locallyUpvoted
 				element.locallyDownvoted = f.locallyDownvoted
@@ -126,10 +60,9 @@ export default class MusicPlayer extends React.Component {
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
 
 			//Since we don't have the api yet
-			this.roomsRef.child('songs').set(this.state.songArray)
-			this. roomsRef.on('value', (snap) => {
+			this.roomsRef.on('value', (snap) => {
 			 // console.log(snap.val())
-			 let sArray = snap.val().songs ? snap.val().songs : []
+			 let sArray = snap.val().songs || []
 			 sArray.sort((a, b) => { 					
 				   return b.ratio - a.ratio
 			   });
@@ -156,6 +89,22 @@ export default class MusicPlayer extends React.Component {
 	
 	onBackButtonPressed = () => {
 		this.props.navigation.goBack()
+	}
+
+	_onAddSongs = (song) => {
+		console.log(song, 'zong')
+		// because db change causes state change we don't need to setState
+		this.roomsRef.child('songs').transaction((snap) => {
+			// console.log(snap,'snappp')
+			if(snap){
+				snap.push(song)
+				return snap
+			}
+			else{
+				return [song]
+			}
+		})
+
 	}
 
 	_onDownvote = (id,upPressed, downPressed) => {
@@ -232,55 +181,49 @@ export default class MusicPlayer extends React.Component {
     const {roomInfo, songArray} =this.state
     
 		
-		return (
-            <SafeAreaView style={styles.container}>
-            
-            <StatusBar hidden={false} barStyle="light-content"/>
+	return (
+		<SafeAreaView style={styles.container}>
+		
+		<StatusBar hidden={false} barStyle="light-content"/>
 
-			
-            <View style={styles.headerContainer}>
-                <Ionicons name='ios-arrow-back' style={styles.headerIcon} size={42} onPress={this.onBackButtonPressed}/>
-                <Text style={styles.headerMessage}>Now Playing</Text>
-            </View>
+		
+		<View style={styles.headerContainer}>
+			<Ionicons name='ios-arrow-back' style={styles.headerIcon} size={42} onPress={this.onBackButtonPressed}/>
+			<Text style={styles.headerMessage}>Now Playing</Text>
+		</View>
 
-            <AlbumArt 
-                url="https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"
-            />
-			{/* <PlayPauseNext /> */}
-            <TrackDetails 
-            title={audioBookPlaylist[this.state.currentIndex].title} 
-            artist={audioBookPlaylist[this.state.currentIndex].author} 
-            navigation={this.props.navigation}
-            songs = {this.state.songArray}
-            onUpvote = {this._onUpvote}
-            onDownvote = {this._onDownvote}
-            />
-			<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
-						{this.state.isPlaying ? (
-							<Ionicons name='ios-pause' size={48} color='#444' />
-						) : (
-							<Ionicons name='ios-play-circle' size={48} color='#444' />
-						)}
-					</TouchableOpacity>
-			<VoteUpNext 
-				key={songArray && songArray[0] && songArray[0].uid} 
-				locallyUpvoted={songArray && songArray[0] && songArray[0].locallyUpvoted}
-				locallyDownvoted={songArray && songArray[0] && songArray[0].locallyDownvoted}
-				title={songArray && songArray[0] && songArray[0].title || "Add a song"}
-				artist={ songArray && songArray[0] && songArray[0].artist || "Something goes here"} 
-				onDownvote={this._onDownvote} onUpvote={this._onUpvote} 
-				upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} 
-				downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} 
-				uid = {songArray && songArray[0] && songArray[0].uid}/>
-			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
-                roomInfo: {
-                    partyCode: roomInfo.partyCode,
-                    password: roomInfo.password
-                },
-            })}/>
-            </SafeAreaView>
+		<AlbumArt 
+		
+		url={this.state.songArray[0] && this.state.songArray[0].artwork || "https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"}            />
+		{/* <PlayPauseNext /> */}
+		<TrackDetails 
+		title={this.state.songArray[0] && this.state.songArray[0].title || "Nothing is playing"} 
+		artist={this.state.songArray[0] && this.state.songArray[0].artistName || "Nothing is playing"} 
+		navigation={this.props.navigation}
+		songs = {this.state.songArray}
+		onUpvote = {this._onUpvote}
+		onAdd = {this._onAddSongs}
+		onDownvote = {this._onDownvote}
+		/>
+		<VoteUpNext 
+			key={songArray && songArray[0] && songArray[0].id} 
+			locallyUpvoted={songArray && songArray[0] && songArray[0].locallyUpvoted}
+			locallyDownvoted={songArray && songArray[0] && songArray[0].locallyDownvoted}
+			title={songArray && songArray[0] && songArray[0].title || "Add a song"}
+			artist={ songArray && songArray[0] && songArray[0].artistName || "Something goes here"} 
+			onDownvote={this._onDownvote} onUpvote={this._onUpvote} 
+			upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} 
+			downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} 
+			id = {songArray && songArray[0] && songArray[0].id}/>
+		<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
+			roomInfo: {
+				partyCode: roomInfo.partyCode,
+				password: roomInfo.password
+			},
+		})}/>
+		</SafeAreaView>
 
-		)
+	)
 	}
 }
 

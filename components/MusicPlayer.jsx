@@ -9,72 +9,72 @@ import VoteUpNext from './VoteUpNext';
 import * as firebase from 'firebase';
 
 
-const myData = [
-  {
-    title: 'HUMBLE',
-	artist: 'Kendrick',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:0
-  },
-  {
-    title: 'Foo',
-    artist: 'Bar',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:1
-  },
-  {
-    title: 'One',
-    artist: 'Marley',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:2
-  },
-  {
-    title: 'Kill',
-    artist: 'Menow',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:3
-  },
-  {
-    title: 'Song',
-    artist: 'Artist',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:4
-  },
-  {
-    title: 'Song',
-    artist: 'Artist',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:5
-  },
-  {
-    title: 'Song',
-    artist: 'Artist',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:6
-  },
-  {
-    title: 'Song',
-    artist: 'Artist',
-	upvotes: 0,
-	downvotes: 0,
-	ratio: 0,
-	uid:7
-  },
-];
+// const myData = [
+//   {
+//     title: 'HUMBLE',
+// 	artist: 'Kendrick',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:0
+//   },
+//   {
+//     title: 'Foo',
+//     artist: 'Bar',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:1
+//   },
+//   {
+//     title: 'One',
+//     artist: 'Marley',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:2
+//   },
+//   {
+//     title: 'Kill',
+//     artist: 'Menow',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:3
+//   },
+//   {
+//     title: 'Song',
+//     artist: 'Artist',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:4
+//   },
+//   {
+//     title: 'Song',
+//     artist: 'Artist',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:5
+//   },
+//   {
+//     title: 'Song',
+//     artist: 'Artist',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:6
+//   },
+//   {
+//     title: 'Song',
+//     artist: 'Artist',
+// 	upvotes: 0,
+// 	downvotes: 0,
+// 	ratio: 0,
+// 	id:7
+//   },
+// ];
 
 const audioBookPlaylist = [
 	{
@@ -96,12 +96,13 @@ const audioBookPlaylist = [
 export default class MusicPlayer extends React.Component {
     state = {
 		isPlaying: false,
+		musicStarted : false,
 		// playbackInstance: null, now a prop for safe unmount
 		currentIndex: 0,
 		volume: 1.0,
 		roomInfo:null,
    		isBuffering: true,
-   		songArray : myData,
+   		songArray : [],
 	}
 
 	_mendArrays = (a) => {
@@ -109,9 +110,9 @@ export default class MusicPlayer extends React.Component {
 		// console.log(a)
 		// console.log(this.state.songArray,"help")
 		const b = a.map(element => {
-			const uid = element.uid
-			const f = this.state.songArray.find(x => x.uid === uid)
-			const good = f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
+			const id = element.id
+			const f = this.state.songArray.find(x => x.id === id)
+			const good = f && f.hasOwnProperty('locallyUpvoted') && f.hasOwnProperty('locallyDownvoted')
 			if(good){
 				element.locallyUpvoted = f.locallyUpvoted
 				element.locallyDownvoted = f.locallyDownvoted
@@ -133,17 +134,18 @@ export default class MusicPlayer extends React.Component {
 			this.setState({roomInfo: this.props.navigation.state.params.roomInfo})
 			
 			//Since we don't have the api yet
-			this.roomsRef.child('songs').set(this.state.songArray)
+			this.roomsRef.child('songs').set([])
 			this.roomsRef.on('value', (snap) => {
 			 // console.log(snap.val())
 			//  console.log(snap.val(),"znap")
 				// console.log(sArray)
-			  let sArray = snap.val().songs ? snap.val().songs : []
+			  let sArray = snap.val().songs || []
+			  console.log(sArray , 'zaza')
 			  sArray.sort((a, b) => { 					
 					return b.ratio - a.ratio
 				});
 			  this.setState({
-				  songArray: this._mendArrays(sArray)
+				  songArray: this._mendArrays(sArray),
 			  })
 			})
 			try {
@@ -157,7 +159,7 @@ export default class MusicPlayer extends React.Component {
 					playThroughEarpieceAndroid: false
 				})
 	
-				this.loadAudio()
+				// this.loadAudio()
 			} catch (e) {
 				console.log(e)
 			}
@@ -177,8 +179,10 @@ export default class MusicPlayer extends React.Component {
 
 		try {
 			const playbackInstance = this.props.screenProps.playbackInstance
+			console.log(this.state.songArray)
+			const audio = this.state.songArray[0] && this.state.songArray[0].uri || 'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3'
 			const source = {
-				uri: 'https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3'
+				uri: audio
 			}
 
 
@@ -208,12 +212,22 @@ export default class MusicPlayer extends React.Component {
 	// }
 
 	handlePlayPause = async () => {
-		const { isPlaying} = this.state
+		const { isPlaying, musicStarted} = this.state
 		const  playbackInstance  = this.props.screenProps.playbackInstance
-		isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
+		if(!musicStarted && !isPlaying){
+			this.loadAudio()
+		}
+		else if(isPlaying){
+			await playbackInstance.pauseAsync()
+		}
+		else{
+			await playbackInstance.playAsync()
+		}
+
 
 		this.setState({
-			isPlaying: !isPlaying
+			isPlaying: !isPlaying,
+			musicStarted: true,
 		})
 	}
 
@@ -260,13 +274,30 @@ export default class MusicPlayer extends React.Component {
 	onBackButtonPressed = () => {
 		this.handlePlayPause()
 		this.props.navigation.goBack()
-    }
+	}
+	
+	_onAddSongs = (song) => {
+		console.log(song)
+		// because db change causes state change we don't need to setState
+		this.roomsRef.child('songs').transaction((snap) => {
+			console.log(snap,'snappp')
+			if(snap){
+				snap.push(song)
+				return snap
+			}
+			else{
+				return [song]
+			}
+		})
+
+
+	}
   
 
   	_onDownvote = (id,upPressed, downPressed) => {
 		
 		let clonedMusic = [...this.state.songArray]
-		const song = clonedMusic.find(x => x.uid === id)
+		const song = clonedMusic.find(x => x.id === id)
 		song.locallyDownvoted = !song.locallyDownvoted
 		song.locallyUpvoted = false
 		this.setState({songArray:clonedMusic})
@@ -274,7 +305,7 @@ export default class MusicPlayer extends React.Component {
 
 		this.roomsRef.child('songs').transaction((snap) => {
 			let s = snap
-			const i = s.findIndex(x => x.uid === id)
+			const i = s.findIndex(x => x.id === id)
 			let dw
 			let uw = s[i].upvotes
 			if(downPressed){
@@ -299,7 +330,7 @@ export default class MusicPlayer extends React.Component {
 	_onUpvote = (id, upPressed, downPressed) => {
 		
 		let clonedMusic = [...this.state.songArray]
-		const song = clonedMusic.find(x => x.uid === id)
+		const song = clonedMusic.find(x => x.id === id)
 		song.locallyUpvoted = !song.locallyUpvoted
 		song.locallyDownvoted = false
 		this.setState({songArray:clonedMusic})
@@ -309,7 +340,7 @@ export default class MusicPlayer extends React.Component {
 			let s = snap
 			// console.log(snap, 'snap')
 			// let s = []
-			const i = s.findIndex(x => x.uid === id)
+			const i = s.findIndex(x => x.id === id)
 			let uw
 			let dw = s[i].downvotes
 			if(downPressed){
@@ -349,16 +380,17 @@ export default class MusicPlayer extends React.Component {
                 <Text style={styles.headerMessage}>Now Playing</Text>
             </View>
 
-            <AlbumArt 
-                url="https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"
-            />
+			<AlbumArt 
+			
+			url={this.state.songArray[0] && this.state.songArray[0].artwork || "https://static.stereogum.com/uploads/2020/01/future-drake-life-is-good-1578632849-640x640.jpg"}            />
 			{/* <PlayPauseNext /> */}
             <TrackDetails 
-            title={audioBookPlaylist[this.state.currentIndex].title} 
-            artist={audioBookPlaylist[this.state.currentIndex].author} 
+            title={this.state.songArray[0] && this.state.songArray[0].title || "Nothing is playing"} 
+            artist={this.state.songArray[0] && this.state.songArray[0].artistName || "Nothing is playing"} 
             navigation={this.props.navigation}
             songs = {this.state.songArray}
-            onUpvote = {this._onUpvote}
+			onUpvote = {this._onUpvote}
+			onAdd = {this._onAddSongs}
             onDownvote = {this._onDownvote}
             />
 			<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
@@ -369,15 +401,15 @@ export default class MusicPlayer extends React.Component {
 						)}
 					</TouchableOpacity>
 			<VoteUpNext 
-				key={songArray && songArray[0] && songArray[0].uid} 
+				key={songArray && songArray[0] && songArray[0].id} 
 				locallyUpvoted={songArray && songArray[0] && songArray[0].locallyUpvoted}
 				locallyDownvoted={songArray && songArray[0] && songArray[0].locallyDownvoted}
 				title={songArray && songArray[0] && songArray[0].title || "Add a song"}
-				artist={ songArray && songArray[0] && songArray[0].artist || "Something goes here"} 
+				artist={ songArray && songArray[0] && songArray[0].artistName || "Something goes here"} 
 				onDownvote={this._onDownvote} onUpvote={this._onUpvote} 
 				upvotes={songArray && songArray[0] && songArray[0].upvotes || 0} 
 				downvotes = {songArray && songArray[0] && songArray[0].downvotes || 0} 
-				uid = {songArray && songArray[0] && songArray[0].uid}/>
+				id = {songArray && songArray[0] && songArray[0].id}/>
 			<Button title="Get Room Info" onPress={() => this.props.navigation.navigate("RoomInfo", {
                 roomInfo: {
                     partyCode: roomInfo.partyCode,

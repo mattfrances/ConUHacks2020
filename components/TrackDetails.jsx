@@ -17,7 +17,7 @@ export default class TrackDetails extends Component {
     visible: false
   }
   render() {
-    const {songs , onDownvote, onUpvote} = this.props
+    const {songs , onDownvote, onUpvote, onAdd} = this.props
     // console.log(songs, 'song')
     const { visible } = this.state
     return (
@@ -25,7 +25,8 @@ export default class TrackDetails extends Component {
         <Queue songs={songs} onDownvote={onDownvote} onUpvote={onUpvote} visible={visible} onClose = {() => this.setState({visible:false})} />
       <View style={styles.container}>
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Search', {
-                        roomId: this.props.roomId
+                        songs,
+                        onAdd,
                     })}>
             <Icon 
                 name= "search" 

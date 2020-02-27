@@ -29,14 +29,14 @@ export default class Queue extends Component {
           </View>
           {songs && songs.length === 0  && <Text style={{color:"white"}} > "Add songs to start the party"</Text>}
           {songs && songs.map((song) => 
-          <VoteUpNext key={song.uid} 
+          <VoteUpNext key={song.id} 
           locallyUpvoted ={song.locallyUpvoted}
           locallyDownvoted ={song.locallyDownvoted}
           title={song.title}
           artist={song.artist}
           onDownvote={onDownvote}
           onUpvote={onUpvote}
-          uid = {song.uid}
+          id = {song.id}
               upvotes={song.upvotes}
               downvotes={song.downvotes}/>)}
         </SafeAreaView>
