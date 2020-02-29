@@ -73,7 +73,6 @@ export default class App extends React.Component {
       item.upvotes = 0
       item.ratio = 0
       
-      console.log(this.filterFunc(item))
       if(!this.filterFunc(item)){
         alert("Sorry, that can't be played")
         return false
