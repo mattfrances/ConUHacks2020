@@ -46,6 +46,7 @@ export default class App extends React.Component {
   }
 
   handleOnClick = (item) => {
+    console.log(item);
     const { onAdd , songs } = this.props.navigation.state.params
 
     const foundSong = songs.find(s => s.id === item.id)
@@ -87,7 +88,8 @@ export default class App extends React.Component {
       onAdd(item)
       this.props.navigation.goBack();
     }
-      );
+      )
+      .catch(e => console.log("problem"));
 
   }
 

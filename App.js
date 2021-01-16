@@ -70,10 +70,13 @@ if (Platform.OS === 'android') {
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBFz2zbD8HAv73hYQxpWcc0kElmJgb3g34",
-  authDomain: "conuhacksradio.firebaseapp.com",
-  databaseURL: "https://conuhacksradio.firebaseio.com/",
-  storageBucket: "conuhacksradio.appspot.com"
+  apiKey: "AIzaSyA61yuwgYDjfKxY1hMuLer9a6ttzFfe5qQ",
+  authDomain: "conuhacksradio-7e996.firebaseapp.com",
+  databaseURL: "https://conuhacksradio-7e996-default-rtdb.firebaseio.com",
+  projectId: "conuhacksradio-7e996",
+  storageBucket: "conuhacksradio-7e996.appspot.com",
+  messagingSenderId: "112823649325",
+  appId: "1:112823649325:web:79afd9c3d64d6307bfe4a4"
 };
 
 firebase.initializeApp(firebaseConfig)
