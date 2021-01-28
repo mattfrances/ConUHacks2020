@@ -13,7 +13,9 @@ import RoomInfo from './components/RoomInfo'
 import Scanner from './components/Scanner'
 import { Audio } from 'expo-av';
 import * as firebase from 'firebase';
-import {Platform, InteractionManager} from 'react-native';
+import {Platform, InteractionManager, LogBox} from 'react-native';
+
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 
 /**
